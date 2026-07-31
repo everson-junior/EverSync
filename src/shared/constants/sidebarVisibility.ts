@@ -142,7 +142,45 @@ export const SIDEBAR_ITEM_ORDER_KEY = "sidebarItemOrder";
 export const SIDEBAR_PRESET_KEY = "sidebarActivePreset";
 export const SIDEBAR_SETTINGS_UPDATED_EVENT = "omniroute:settings-updated";
 
-const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
+export function isMinimalBuildProfile(): boolean {
+  return (
+    process.env.NEXT_PUBLIC_OMNIROUTE_BUILD_PROFILE === "minimal" ||
+    process.env.OMNIROUTE_BUILD_PROFILE === "minimal"
+  );
+}
+
+export function isRouteAllowedInBasicProfile(pathname: string): boolean {
+  if (!isMinimalBuildProfile()) return true;
+
+  // Allowed path prefixes for Basic (Minimal) profile
+  const allowedPrefixes = [
+    "/home",
+    "/dashboard/endpoint",
+    "/dashboard/api-manager",
+    "/dashboard/providers",
+    "/dashboard/combos",
+    "/dashboard/analytics",
+    "/dashboard/costs",
+    "/dashboard/logs",
+    "/dashboard/health",
+    "/dashboard/settings/general",
+    "/dashboard/settings/sidebar",
+    "/dashboard/changelog",
+    "/docs",
+    "/changelog",
+  ];
+
+  // Exact matches or subpaths of allowed prefixes
+  if (pathname === "/dashboard" || pathname === "/dashboard/") return true;
+  if (pathname === "/dashboard/settings" || pathname === "/dashboard/settings/") return true;
+
+  // Disallow embedded services subpath under providers
+  if (pathname.startsWith("/dashboard/providers/services")) return false;
+
+  return allowedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(prefix + "/"));
+}
+
+export const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
   "home",
   "endpoints",
   "api-manager",

@@ -109,6 +109,7 @@ const nextConfig = {
   // examples. Empty by default (root deploys unchanged).
   env: {
     NEXT_PUBLIC_OMNIROUTE_BASE_PATH: normalizeBasePath(process.env.OMNIROUTE_BASE_PATH),
+    NEXT_PUBLIC_OMNIROUTE_BUILD_PROFILE: process.env.OMNIROUTE_BUILD_PROFILE || "",
   },
   distDir,
   // Turbopack config: redirect native modules to stubs at build time

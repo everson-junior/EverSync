@@ -32,6 +32,10 @@ import {
   applySectionOrder,
   applyItemOrder,
   getSidebarIconAccent,
+  isMinimalBuildProfile,
+  MINIMAL_SHOWN,
+  HIDEABLE_SIDEBAR_ITEM_IDS,
+  type HideableSidebarItemId,
   type SidebarSectionId,
   type SidebarItemDefinition,
   type SidebarItemGroup,
@@ -205,6 +209,13 @@ export default function Sidebar({
     typeof t.has === "function" && t.has(key) ? t(key) : fallback;
 
   const resolveItem = (item: SidebarItemDefinition, hidden: Set<string>) => {
+    if (
+      isMinimalBuildProfile() &&
+      HIDEABLE_SIDEBAR_ITEM_IDS.includes(item.id as HideableSidebarItemId) &&
+      !MINIMAL_SHOWN.has(item.id as HideableSidebarItemId)
+    ) {
+      return null;
+    }
     if (hidden.has(item.id)) return null;
     const subtitle = item.subtitleKey
       ? getSidebarLabel(item.subtitleKey, item.subtitleFallback ?? "")

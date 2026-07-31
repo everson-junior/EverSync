@@ -1,11 +1,11 @@
 {
-  "name": "omniroute",
-  "version": "3.8.50",
-  "description": "Unified AI router with 160+ providers, RTK+Caveman compression, auto fallback, MCP/A2A, desktop, PWA, and OpenAI-compatible APIs.",
+  "name": "eversync",
+  "version": "1.0.0",
+  "description": "EverSync V1.0.0 (Base V3.8.50) — Unified AI router with providers, auto fallback, and OpenAI-compatible APIs.",
   "type": "module",
   "bin": {
-    "omniroute": "bin/omniroute.mjs",
-    "omniroute-reset-password": "bin/reset-password.mjs"
+    "eversync": "bin/omniroute.mjs",
+    "eversync-reset-password": "bin/reset-password.mjs"
   },
   "files": [
     "bin/",
@@ -76,6 +76,7 @@
   "homepage": "https://omniroute.online",
   "scripts": {
     "dev": "node --max-old-space-size=8192 scripts/dev/run-next.mjs dev",
+    "dev:basic": "OMNIROUTE_BUILD_PROFILE=minimal node --max-old-space-size=8192 scripts/dev/run-next.mjs dev",
     "prebuild:docs": "node scripts/docs/gen-openapi-module.mjs",
     "gen:provider-reference": "bun scripts/docs/gen-provider-reference.ts",
     "bench:compression": "bun scripts/compression/benchmark.ts",
@@ -88,6 +89,7 @@
     "eval:router:trends": "node --import tsx scripts/router-eval/trends.ts",
     "release:sync-changelog-i18n": "node scripts/release/sync-changelog-i18n.mjs",
     "build": "node scripts/build/build-next-isolated.mjs",
+    "build:basic": "OMNIROUTE_BUILD_PROFILE=minimal node scripts/build/build-next-isolated.mjs",
     "build:secure": "OMNIROUTE_BUILD_PROFILE=minimal node scripts/build/build-next-isolated.mjs",
     "build:backend": "cross-env OMNIROUTE_BUILD_BACKEND_ONLY=1 node scripts/build/build-next-isolated.mjs",
     "build:cli": "node --import tsx scripts/build/prepublish.ts",

@@ -112,6 +112,7 @@ export async function ensureDbReadyForBoot(
 }
 
 function isBackgroundServicesDisabled(): boolean {
+  if (process.env.OMNIROUTE_BUILD_PROFILE === "minimal") return true;
   const raw = process.env.OMNIROUTE_DISABLE_BACKGROUND_SERVICES;
   if (!raw) return false;
   return new Set(["1", "true", "yes", "on"]).has(raw.trim().toLowerCase());

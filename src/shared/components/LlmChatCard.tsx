@@ -10,8 +10,8 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/shared/utils/cn";
-import { useApiKey } from "../../providers/hooks/useApiKey";
-import { useProviderModels } from "../../providers/hooks/useProviderModels";
+import { useApiKey } from "@/app/(dashboard)/dashboard/providers/hooks/useApiKey";
+import { useProviderModels } from "@/app/(dashboard)/dashboard/providers/hooks/useProviderModels";
 import { getProviderAlias } from "@/shared/constants/providers";
 
 const ENDPOINT = "/api/v1/chat/completions";
@@ -37,14 +37,7 @@ function resolvePlaygroundKeyId(
 
 /**
  * Qualify a provider-scoped playground model with its routing prefix so
- * OmniRoute can resolve it unambiguously. The previous heuristic only prefixed
- * models without a `/`, which skipped vendor-namespaced ids like
- * `moonshotai/kimi-k2.6` or `nvidia/zyphra/zamba2-7b-instruct` — those already
- * contain a slash, so they were sent bare and rejected with
- * "Ambiguous model ... Use provider/model prefix" when the same id exists under
- * several providers (#3050). The routing prefix is normally the provider alias,
- * which can intentionally differ from the provider id (for example `oc` routes
- * OpenCode Free while `opencode` is reserved by the Zen executor).
+ * OmniRoute can resolve it unambiguously.
  */
 export function qualifyPlaygroundModel(
   model: string | null | undefined,
@@ -166,194 +159,27 @@ export function LlmChatCard({
   const firstModel = models[0]?.id ?? "";
   const effectiveModel = model || firstModel || initialModel || "";
   const routingPrefix = getProviderAlias(providerId);
-  // Auto-prefix model with the provider's routing alias to avoid OmniRoute "Ambiguous model"
-  // rejection when the same id is registered under multiple providers. This
-  // also covers vendor-namespaced ids (e.g. `moonshotai/kimi-k2.6`) that already
-  // contain a slash but still need the provider prefix (#3050).
   const qualifiedModel = qualifyPlaygroundModel(effectiveModel, routingPrefix);
 
-  // Autofocus textarea in embedded mode
   useEffect(() => {
     if (embedded) textareaRef.current?.focus();
   }, [embedded]);
 
-  // Auto-scroll to bottom when messages update
   useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages]);
-
-  // Cleanup abort on unmount
-  useEffect(() => {
-    return () => {
-      abortRef.current?.abort();
-    };
-  }, []);
-
-  const handleSend = useCallback(async () => {
-    const trimmed = input.trim();
-    if (!trimmed || streaming) return;
-
-    const userMsg: Message = { role: "user", content: trimmed };
-    const assistantMsg: Message = { role: "assistant", content: "", model: qualifiedModel };
-    setMessages((prev) => [...prev, userMsg, assistantMsg]);
-    setInput("");
-    setStreaming(true);
-    setStats(null);
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    const t0 = performance.now();
-
-    try {
-      // The playground authenticates via the dashboard session cookie — we never
-      // put an API key secret on the wire. `/api/keys` only exposes MASKED values
-      // (sk-xxxx****yyyy), which are invalid as bearer tokens and would 401 under
-      // REQUIRE_API_KEY. When a specific key is selected we send only its id so the
-      // gateway can apply that key's policy (allowed_models, etc.) server-side.
-      // "(default)" sends no key id → full session access (any model).
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        "x-connection-id": providerId,
-      };
-      const playgroundKeyId = resolvePlaygroundKeyId(selectedKey, keys);
-      if (playgroundKeyId) headers[PLAYGROUND_KEY_ID_HEADER] = playgroundKeyId;
-      const res = await fetch(ENDPOINT, {
-        method: "POST",
-        signal: controller.signal,
-        credentials: "same-origin",
-        headers,
-        body: JSON.stringify({
-          model: qualifiedModel,
-          messages: [
-            // Include history (all except the last assistant placeholder)
-            ...messages,
-            userMsg,
-          ],
-          stream: true,
-          stream_options: { include_usage: true },
-        }),
-      });
-
-      if (!res.ok || !res.body) {
-        const errData: unknown = await res.json().catch(() => null);
-        const errMsg =
-          errData && typeof errData === "object" && (errData as Record<string, unknown>).error
-            ? String(
-                ((errData as Record<string, unknown>).error as Record<string, unknown>)?.message ??
-                  `HTTP ${res.status}`
-              )
-            : `HTTP ${res.status}`;
-        setMessages((prev) => {
-          const next = [...prev];
-          const last = next[next.length - 1];
-          next[next.length - 1] = {
-            ...last,
-            role: "assistant",
-            content: `[${t("errorLabel")}: ${errMsg}]`,
-          };
-          return next;
-        });
-        return;
-      }
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let acc = "";
-      let tokenUsage: { tokensIn: number; tokensOut: number } = { tokensIn: 0, tokensOut: 0 };
-      let buffer = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        // Keep last partial line in buffer
-        buffer = lines.pop() ?? "";
-
-        for (const line of lines) {
-          const trimmedLine = line.trim();
-          if (!trimmedLine) continue;
-          const delta = extractDeltaContent(trimmedLine);
-          if (delta) {
-            acc += delta;
-            setMessages((prev) => {
-              const next = [...prev];
-              const last = next[next.length - 1];
-              next[next.length - 1] = { ...last, role: "assistant", content: acc };
-              return next;
-            });
-          }
-          const usage = extractUsage(trimmedLine);
-          if (usage) {
-            tokenUsage = {
-              tokensIn: usage.prompt_tokens ?? tokenUsage.tokensIn,
-              tokensOut: usage.completion_tokens ?? tokenUsage.tokensOut,
-            };
-          }
-        }
-      }
-
-      // Flush remaining buffer
-      if (buffer.trim()) {
-        const delta = extractDeltaContent(buffer.trim());
-        if (delta) {
-          acc += delta;
-          setMessages((prev) => {
-            const next = [...prev];
-            const last = next[next.length - 1];
-            next[next.length - 1] = { ...last, role: "assistant", content: acc };
-            return next;
-          });
-        }
-      }
-
-      setStats({
-        latencyMs: performance.now() - t0,
-        tokensIn: tokenUsage.tokensIn,
-        tokensOut: tokenUsage.tokensOut,
-      });
-    } catch (err) {
-      if ((err as Error).name === "AbortError") {
-        // Cancelled by user — leave partial message
-        return;
-      }
-      const msg = err instanceof Error ? err.message : t("requestFailed");
-      setMessages((prev) => {
-        const next = [...prev];
-        const last = next[next.length - 1];
-        next[next.length - 1] = {
-          ...last,
-          role: "assistant",
-          content: `[${t("errorLabel")}: ${msg}]`,
-        };
-        return next;
-      });
-    } finally {
-      setStreaming(false);
-      abortRef.current = null;
-      // Refocus textarea so user can keep typing
-      requestAnimationFrame(() => textareaRef.current?.focus());
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [input, streaming, selectedKey, keys, providerId, qualifiedModel, messages, t]);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void handleSend();
-    }
-  };
-
-  const handleStop = () => {
-    abortRef.current?.abort();
-  };
+  }, [messages, streaming]);
 
   const handleClear = useCallback(() => {
-    if (streaming) abortRef.current?.abort();
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
     setMessages([]);
+    setStreaming(false);
     setStats(null);
-  }, [streaming]);
+  }, []);
 
   useImperativeHandle(
     controlsRef,
@@ -365,16 +191,155 @@ export function LlmChatCard({
     [handleClear, messages.length, streaming]
   );
 
-  // Notify parent of control state changes (for external toolbar)
   useEffect(() => {
-    onControlsChange?.({
-      clear: handleClear,
-      hasMessages: messages.length > 0,
-      streaming,
-    });
-  }, [onControlsChange, handleClear, messages.length, streaming]);
+    if (onControlsChange) {
+      onControlsChange({
+        clear: handleClear,
+        hasMessages: messages.length > 0,
+        streaming,
+      });
+    }
+  }, [handleClear, messages.length, streaming, onControlsChange]);
 
-  const modelOptions = models.length > 0 ? models : initialModel ? [{ id: initialModel }] : [];
+  const handleSend = async () => {
+    const text = input.trim();
+    if (!text || streaming) return;
+
+    setInput("");
+    setStats(null);
+
+    const userMessage: Message = { role: "user", content: text };
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
+
+    setStreaming(true);
+
+    const assistantMsgIndex = nextMessages.length;
+    setMessages((prev) => [...prev, { role: "assistant", content: "", model: qualifiedModel }]);
+
+    const startTime = performance.now();
+    let promptTokens = 0;
+    let completionTokens = 0;
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      const keyId = resolvePlaygroundKeyId(selectedKey, keys);
+      if (keyId) {
+        headers[PLAYGROUND_KEY_ID_HEADER] = keyId;
+      }
+
+      const res = await fetch(ENDPOINT, {
+        method: "POST",
+        headers,
+        signal: controller.signal,
+        body: JSON.stringify({
+          model: qualifiedModel,
+          messages: nextMessages.map((m) => ({ role: m.role, content: m.content })),
+          stream: true,
+          stream_options: { include_usage: true },
+        }),
+      });
+
+      if (!res.ok) {
+        let errText = "";
+        try {
+          const errJson = (await res.json()) as Record<string, unknown>;
+          const errObj = errJson.error as Record<string, unknown> | undefined;
+          errText = typeof errObj?.message === "string" ? errObj.message : JSON.stringify(errJson);
+        } catch {
+          errText = await res.text();
+        }
+        throw new Error(errText || `HTTP ${res.status}`);
+      }
+
+      if (!res.body) {
+        throw new Error("No response body");
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+
+          const usage = extractUsage(trimmed);
+          if (usage) {
+            if (usage.prompt_tokens) promptTokens = usage.prompt_tokens;
+            if (usage.completion_tokens) completionTokens = usage.completion_tokens;
+          }
+
+          const delta = extractDeltaContent(trimmed);
+          if (delta) {
+            setMessages((prev) => {
+              const updated = [...prev];
+              const current = updated[assistantMsgIndex];
+              if (current) {
+                updated[assistantMsgIndex] = {
+                  ...current,
+                  content: current.content + delta,
+                };
+              }
+              return updated;
+            });
+          }
+        }
+      }
+
+      const latencyMs = performance.now() - startTime;
+      setStats({
+        tokensIn: promptTokens,
+        tokensOut: completionTokens,
+        latencyMs,
+      });
+    } catch (err) {
+      if ((err as Error).name === "AbortError") return;
+
+      const errMsg = (err as Error).message || "An unknown error occurred";
+      setMessages((prev) => {
+        const updated = [...prev];
+        updated[assistantMsgIndex] = {
+          role: "assistant",
+          content: `[${t("errorLabel")}: ${errMsg}]`,
+        };
+        return updated;
+      });
+    } finally {
+      setStreaming(false);
+      abortRef.current = null;
+    }
+  };
+
+  const handleStop = () => {
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+    setStreaming(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      void handleSend();
+    }
+  };
+
+  const modelOptions = models.length > 0 ? models : [];
 
   return (
     <div
@@ -383,10 +348,8 @@ export function LlmChatCard({
         embedded ? "flex-1 min-h-0" : "rounded-lg border border-border bg-bg-card p-4"
       )}
     >
-      {/* Header controls (hidden when parent renders its own toolbar) */}
       {!hideToolbar && (
         <div className="flex flex-wrap items-center gap-2">
-          {/* Model select */}
           <div className="flex items-center gap-1.5 min-w-0 flex-1">
             <label className="text-xs text-text-muted shrink-0">{t("model")}:</label>
             <select
@@ -402,7 +365,6 @@ export function LlmChatCard({
               ))}
             </select>
           </div>
-          {/* Key select */}
           {keys.length > 0 && (
             <div className="flex items-center gap-1.5">
               <label className="text-xs text-text-muted shrink-0">{t("selectKey")}:</label>
@@ -420,7 +382,6 @@ export function LlmChatCard({
               </select>
             </div>
           )}
-          {/* Clear button */}
           {messages.length > 0 && (
             <button
               type="button"
@@ -433,7 +394,6 @@ export function LlmChatCard({
         </div>
       )}
 
-      {/* Messages */}
       <div
         ref={scrollRef}
         className={cn(
@@ -521,7 +481,6 @@ export function LlmChatCard({
         )}
       </div>
 
-      {/* Input row */}
       <div className="relative flex items-end gap-2 rounded-lg border border-border bg-bg-subtle px-3 py-2 focus-within:ring-1 focus-within:ring-primary focus-within:border-primary/50 transition-colors">
         <textarea
           ref={textareaRef}
@@ -554,7 +513,6 @@ export function LlmChatCard({
         )}
       </div>
 
-      {/* Stats row */}
       {stats && (
         <div className="flex items-center gap-1.5 text-[11px] text-text-muted">
           <span className="material-symbols-outlined text-[13px]">bolt</span>

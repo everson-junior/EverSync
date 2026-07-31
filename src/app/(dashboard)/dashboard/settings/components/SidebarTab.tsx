@@ -33,6 +33,8 @@ import {
   SIDEBAR_SETTINGS_UPDATED_EVENT,
   SIDEBAR_SECTIONS,
   SIDEBAR_PRESETS,
+  isMinimalBuildProfile,
+  MINIMAL_SHOWN,
   applySectionOrder,
   applyItemOrder,
   normalizeHiddenSidebarItems,
@@ -234,7 +236,10 @@ function GroupItemVisibilityControl({
 }) {
   const tSidebar = useTranslations("sidebar");
   const hideableId = isHideableSidebarItemId(item.id) ? item.id : null;
-  if (hideableId !== null) {
+  const isMinimalBuild = isMinimalBuildProfile();
+  const isNotMinimalItem = isMinimalBuild && hideableId !== null && !MINIMAL_SHOWN.has(hideableId);
+
+  if (hideableId !== null && !isNotMinimalItem) {
     return (
       <Toggle
         size="sm"
@@ -258,14 +263,24 @@ function GroupItemVisibilityControl({
 function ItemRow({ item, hiddenSet, onToggleItem, getLabel }: ItemRowProps) {
   const tSidebar = useTranslations("sidebar");
   const hideableId = isHideableSidebarItemId(item.id) ? item.id : null;
-  const isProtected = PROTECTED_ITEM_IDS.has(item.id) || hideableId === null;
+  const isMinimalBuild = isMinimalBuildProfile();
+  const isNotMinimalItem = isMinimalBuild && hideableId !== null && !MINIMAL_SHOWN.has(hideableId);
+  const isProtected = PROTECTED_ITEM_IDS.has(item.id) || hideableId === null || isNotMinimalItem;
+
   return (
     <div className="flex items-center justify-between gap-4 px-4 py-3">
       <div className="flex items-center gap-2 min-w-0">
         <span className="material-symbols-outlined text-[16px] text-text-muted/50 shrink-0">
           {item.icon}
         </span>
-        <p className="font-medium truncate">{getLabel(item.i18nKey, item.id)}</p>
+        <p
+          className={cn(
+            "font-medium truncate",
+            isNotMinimalItem && "text-text-muted/40 opacity-60"
+          )}
+        >
+          {getLabel(item.i18nKey, item.id)}
+        </p>
       </div>
       {isProtected ? (
         <span
@@ -327,8 +342,8 @@ function GroupRow({
           </span>
         </button>
         <span className="text-xs text-text-muted/40">
-          {group.items.filter((i) => !isHideableSidebarItemId(i.id) || !hiddenSet.has(i.id)).length}/
-          {group.items.length}
+          {group.items.filter((i) => !isHideableSidebarItemId(i.id) || !hiddenSet.has(i.id)).length}
+          /{group.items.length}
         </span>
         {canToggleSeparator && (
           <div className="flex items-center gap-2 border-l border-border/60 pl-3">
@@ -458,9 +473,7 @@ export default function SidebarTab() {
     patch({ [HIDDEN_SIDEBAR_GROUP_LABELS_SETTING_KEY]: next, [SIDEBAR_PRESET_KEY]: null });
   };
 
-  const visibleSections = SIDEBAR_SECTIONS.filter(
-    (s) => s.visibility !== "debug" || showDebug
-  );
+  const visibleSections = SIDEBAR_SECTIONS.filter((s) => s.visibility !== "debug" || showDebug);
 
   const orderedSections = applySectionOrder(visibleSections, sectionOrder).map((s) => ({
     ...s,
@@ -580,51 +593,53 @@ export default function SidebarTab() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {SIDEBAR_PRESETS.map((preset) => {
-              const isActive = activePreset === preset.id;
-              return (
-                <button
-                  key={preset.id}
-                  disabled={loading}
-                  onClick={() => {
-                    if (activePreset === preset.id) return;
-                    if (
-                      activePreset !== null ||
-                      hiddenSidebarItems.length > 0 ||
-                      hiddenSidebarGroupLabels.length > 0 ||
-                      sectionOrder.length > 0
-                    ) {
-                      setConfirmPreset(preset.id);
-                    } else {
-                      applyPreset(preset.id);
-                    }
-                  }}
-                  className={cn(
-                    "flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-colors disabled:opacity-60",
-                    isActive
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border hover:border-primary/40 bg-surface/40 text-text-main"
-                  )}
-                >
-                  <span
-                    className="material-symbols-outlined text-[22px]"
-                    style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
-                    aria-hidden="true"
-                  >
-                    {preset.icon}
-                  </span>
-                  <span className="text-sm font-semibold">{presetLabels[preset.id]}</span>
-                  <span
+            {SIDEBAR_PRESETS.filter((p) => !isMinimalBuildProfile() || p.id === "minimal").map(
+              (preset) => {
+                const isActive = activePreset === preset.id;
+                return (
+                  <button
+                    key={preset.id}
+                    disabled={loading}
+                    onClick={() => {
+                      if (activePreset === preset.id) return;
+                      if (
+                        activePreset !== null ||
+                        hiddenSidebarItems.length > 0 ||
+                        hiddenSidebarGroupLabels.length > 0 ||
+                        sectionOrder.length > 0
+                      ) {
+                        setConfirmPreset(preset.id);
+                      } else {
+                        applyPreset(preset.id);
+                      }
+                    }}
                     className={cn(
-                      "text-[10px] text-center",
-                      isActive ? "text-primary/70" : "text-text-muted"
+                      "flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-colors disabled:opacity-60",
+                      isActive
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/40 bg-surface/40 text-text-main"
                     )}
                   >
-                    {presetDescriptions[preset.id]}
-                  </span>
-                </button>
-              );
-            })}
+                    <span
+                      className="material-symbols-outlined text-[22px]"
+                      style={isActive ? { fontVariationSettings: "'FILL' 1" } : {}}
+                      aria-hidden="true"
+                    >
+                      {preset.icon}
+                    </span>
+                    <span className="text-sm font-semibold">{presetLabels[preset.id]}</span>
+                    <span
+                      className={cn(
+                        "text-[10px] text-center",
+                        isActive ? "text-primary/70" : "text-text-muted"
+                      )}
+                    >
+                      {presetDescriptions[preset.id]}
+                    </span>
+                  </button>
+                );
+              }
+            )}
           </div>
 
           {/* Confirm preset dialog */}

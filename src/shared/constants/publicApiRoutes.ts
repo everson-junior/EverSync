@@ -53,6 +53,10 @@ function isPublicCloudApiRoute(pathname: string, method: string): boolean {
 }
 
 export function isPublicApiRoute(pathname: string, method = "GET"): boolean {
+  if (process.env.OMNIROUTE_BUILD_PROFILE === "minimal" && pathname.startsWith("/api/skills/")) {
+    return false;
+  }
+
   if (isPublicCloudApiRoute(pathname, method)) {
     return true;
   }

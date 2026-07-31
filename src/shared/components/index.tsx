@@ -45,6 +45,7 @@ export { default as CollapsibleSection } from "./CollapsibleSection";
 export { default as InfoTooltip } from "./InfoTooltip";
 export { default as PresetSlider } from "./PresetSlider";
 export { default as DistributeProxiesButton } from "./DistributeProxiesButton";
+export { default as FeatureDisabledNotice } from "./FeatureDisabledNotice";
 
 export { SkillsConceptCard } from "./SkillsConceptCard";
 

@@ -3,10 +3,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 
-import {
-  LlmChatCard,
-  type LlmChatControls,
-} from "@/app/(dashboard)/dashboard/media-providers/components/LlmChatCard";
+import { LlmChatCard, type LlmChatControls } from "@/shared/components/LlmChatCard";
 import ProviderIcon from "@/shared/components/ProviderIcon";
 import { useApiKey } from "@/app/(dashboard)/dashboard/providers/hooks/useApiKey";
 import { useProviderModels } from "@/app/(dashboard)/dashboard/providers/hooks/useProviderModels";
