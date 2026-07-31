@@ -394,7 +394,7 @@
     "showConfiguredOnly": "Show Configured Only",
     "showFreeOnly": "Somente grátis",
     "addFirstProvider": "Adicione seu primeiro provedor",
-    "addFirstProviderDesc": "Conecte um provedor de IA para começar a rotear solicitações por meio do OmniRoute. Você pode usar provedores gratuitos, chaves de API ou contas OAuth.",
+    "addFirstProviderDesc": "Conecte um provedor de IA para começar a rotear solicitações por meio do EverSync. Você pode usar provedores gratuitos, chaves de API ou contas OAuth.",
     "learnMore": "Saiba mais",
     "includeDomains": "Include Domains",
     "promptCache": "Prompt Cache",

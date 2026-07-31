@@ -25,7 +25,7 @@ export default function FeatureDisabledNotice({ featureName }: FeatureDisabledNo
         <p className="text-sm text-text-muted mb-6 leading-relaxed">
           {featureName
             ? `A funcionalidade "${featureName}" não está disponível nesta versão.`
-            : "Esta funcionalidade foi desativada no perfil Basic (Minimal) do OmniRoute para redução de bundle size e otimização de recursos."}
+            : "Esta funcionalidade foi desativada no perfil Basic (Minimal) do EverSync para redução de bundle size e otimização de recursos."}
         </p>
 
         <div className="flex justify-center">
