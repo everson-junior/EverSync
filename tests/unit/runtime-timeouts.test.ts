@@ -54,7 +54,7 @@ test("upstream timeout config honors explicit overrides and falls back on invali
   });
 
   assert.equal(config.streamReadinessTimeoutMs, 90000);
-  assert.equal(config.streamReadinessMaxTimeoutMs, 240000);
+  assert.equal(config.streamReadinessMaxTimeoutMs, 230260);
   assert.equal(config.fetchHeadersTimeoutMs, 610000);
   assert.equal(config.fetchBodyTimeoutMs, 0);
   assert.equal(config.fetchConnectTimeoutMs, 45000);

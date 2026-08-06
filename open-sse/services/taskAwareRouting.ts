@@ -241,7 +241,7 @@ export function classifyTask(body: Record<string, unknown>): TaskClassification 
 
   const heavySignalCount = [
     add(s.promptChars >= 50000, "large-context"),
-    add(s.promptChars >= 24000, "medium-large-context"),
+    add(s.promptChars >= 23026, "medium-large-context"),
     add(s.messageCount >= 16, "long-conversation"),
     add(s.toolCount >= 4, "many-tools"),
     add(s.outputTokens >= 8192, "large-output"),

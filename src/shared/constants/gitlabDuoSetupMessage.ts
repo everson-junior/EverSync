@@ -7,7 +7,7 @@
  */
 export const GITLAB_DUO_OAUTH_APPLICATIONS_URL = "https://gitlab.com/-/profile/applications";
 
-export const GITLAB_DUO_OAUTH_DEFAULT_REDIRECT_URI = "http://localhost:20128/callback";
+export const GITLAB_DUO_OAUTH_DEFAULT_REDIRECT_URI = "http://localhost:24026/callback";
 
 export const GITLAB_DUO_OAUTH_SCOPES = "ai_features read_user";
 

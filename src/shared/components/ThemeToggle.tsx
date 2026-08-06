@@ -11,9 +11,22 @@ export default function ThemeToggle({
   className?: any;
   variant?: string;
 }) {
-  const { toggleTheme, isDark } = useTheme();
+  const { toggleTheme, theme, isDark, isCloud } = useTheme();
   const t = useTranslations("header");
-  const toggleLabel = isDark ? t("switchToLightMode") : t("switchToDarkMode");
+
+  let icon = "dark_mode";
+  let toggleLabel = t("switchToDarkMode");
+
+  if (theme === "cloud" || isCloud) {
+    icon = "light_mode";
+    toggleLabel = t("switchToLightMode");
+  } else if (theme === "dark" || isDark) {
+    icon = "cloud";
+    toggleLabel = t("switchToCloudMode");
+  } else {
+    icon = "dark_mode";
+    toggleLabel = t("switchToDarkMode");
+  }
 
   const variants = {
     default: cn(
@@ -48,7 +61,7 @@ export default function ThemeToggle({
           variant === "card" && "transition-transform duration-300 group-hover:rotate-12"
         )}
       >
-        {isDark ? "light_mode" : "dark_mode"}
+        {icon}
       </span>
     </button>
   );

@@ -40,7 +40,16 @@ const useThemeStore = create<ThemeState>()(
 
       toggleTheme: () => {
         const currentTheme = get().theme;
-        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        let newTheme = "light";
+        if (currentTheme === "light") {
+          newTheme = "dark";
+        } else if (currentTheme === "dark") {
+          newTheme = "cloud";
+        } else if (currentTheme === "cloud") {
+          newTheme = "light";
+        } else {
+          newTheme = "dark";
+        }
         set({ theme: newTheme });
         applyTheme(newTheme);
       },
@@ -67,7 +76,7 @@ export const COLOR_THEMES: Record<string, string> = {
   cyan: "#06b6d4",
 };
 
-// Apply light/dark theme to document
+// Apply light/dark/cloud theme to document
 function applyTheme(theme: string) {
   if (typeof window === "undefined") return;
 
@@ -75,10 +84,12 @@ function applyTheme(theme: string) {
   const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   const effectiveTheme = theme === "system" ? systemTheme : theme;
 
+  root.classList.remove("dark", "cloud");
+
   if (effectiveTheme === "dark") {
     root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
+  } else if (effectiveTheme === "cloud") {
+    root.classList.add("cloud");
   }
 }
 

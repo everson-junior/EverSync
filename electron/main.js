@@ -347,7 +347,7 @@ function createWindow() {
     height: 900,
     minWidth: 1024,
     minHeight: 700,
-    title: "OmniRoute",
+    title: "EverSync",
     icon: path.join(RESOURCES_PATH, "assets", "icon.png"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -434,7 +434,7 @@ function createTray() {
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: "Open OmniRoute",
+      label: "Open EverSync",
       click: () => {
         if (mainWindow) {
           mainWindow.show();
@@ -452,6 +452,7 @@ function createTray() {
       submenu: [
         { label: `Port: ${serverPort}`, enabled: false },
         { type: "separator" },
+        { label: "23026", click: () => changePort(23026) },
         { label: "20128", click: () => changePort(20128) },
         { label: "3000", click: () => changePort(3000) },
         { label: "8080", click: () => changePort(8080) },
@@ -472,7 +473,7 @@ function createTray() {
     },
   ]);
 
-  tray.setToolTip("OmniRoute");
+  tray.setToolTip("EverSync");
   tray.setContextMenu(contextMenu);
 
   tray.on("double-click", () => {

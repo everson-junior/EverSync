@@ -18,6 +18,22 @@ export async function installCert(_sudoPassword: string, _certPath: string): Pro
   throw featureDisabledError(FEATURE);
 }
 
+export async function installCertResult(_sudoPassword: string, _certPath: string): Promise<never> {
+  throw featureDisabledError(FEATURE);
+}
+
+export async function installCaCert(_sudoPassword: string, _caCertPath: string): Promise<never> {
+  throw featureDisabledError(FEATURE);
+}
+
 export async function uninstallCert(_sudoPassword: string, _certPath: string): Promise<void> {
   throw featureDisabledError(FEATURE);
+}
+
+export function classifyCertInstallError(_message: string): "environment" {
+  return "environment";
+}
+
+export function buildCertManualGuide(_certPath: string, _platform?: string): any {
+  return { platform: process.platform, certPath: _certPath, downloadUrl: "", steps: [] };
 }

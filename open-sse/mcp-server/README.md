@@ -28,7 +28,7 @@ The MCP Server allows any AI agent (Claude Desktop, Cursor, VS Code Copilot, cus
                               │  HTTP (internal)
                               ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│                    OmniRoute Gateway (port 20128)                 │
+│                    OmniRoute Gateway (port 23026)                 │
 │        /v1/chat/completions  /api/combos  /api/usage  ...        │
 └──────────────────────────────────────────────────────────────────┘
 ```
@@ -41,7 +41,7 @@ The MCP Server allows any AI agent (Claude Desktop, Cursor, VS Code Copilot, cus
 
 ```bash
 # Required: OmniRoute base URL
-export OMNIROUTE_BASE_URL="http://localhost:20128"
+export OMNIROUTE_BASE_URL="http://localhost:23026"
 
 # Optional: API key for authenticated access
 export OMNIROUTE_API_KEY="your-api-key"
@@ -64,7 +64,7 @@ Add to your MCP client configuration:
       "command": "node",
       "args": ["path/to/omniroute/open-sse/mcp-server/server.ts"],
       "env": {
-        "OMNIROUTE_BASE_URL": "http://localhost:20128",
+        "OMNIROUTE_BASE_URL": "http://localhost:24026",
         "OMNIROUTE_API_KEY": "your-key"
       }
     }
@@ -81,7 +81,7 @@ Add to your MCP client configuration:
       "command": "npx",
       "args": ["tsx", "open-sse/mcp-server/server.ts"],
       "env": {
-        "OMNIROUTE_BASE_URL": "http://localhost:20128"
+        "OMNIROUTE_BASE_URL": "http://localhost:24026"
       }
     }
   }
@@ -98,7 +98,7 @@ Add to your MCP client configuration:
         "command": "npx",
         "args": ["tsx", "open-sse/mcp-server/server.ts"],
         "env": {
-          "OMNIROUTE_BASE_URL": "http://localhost:20128"
+          "OMNIROUTE_BASE_URL": "http://localhost:24026"
         }
       }
     }
@@ -193,7 +193,7 @@ async def main():
         command="npx",
         args=["tsx", "open-sse/mcp-server/server.ts"],
         env={
-            "OMNIROUTE_BASE_URL": "http://localhost:20128",
+            "OMNIROUTE_BASE_URL": "http://localhost:24026",
             "OMNIROUTE_API_KEY": "your-key",
         },
     )
@@ -256,7 +256,7 @@ async function main() {
     command: "npx",
     args: ["tsx", "open-sse/mcp-server/server.ts"],
     env: {
-      OMNIROUTE_BASE_URL: "http://localhost:20128",
+      OMNIROUTE_BASE_URL: "http://localhost:24026",
       OMNIROUTE_API_KEY: "your-key",
     },
   });
@@ -363,7 +363,7 @@ func routeRequest(baseURL, model, prompt string) (string, error) {
 }
 
 func main() {
-    base := "http://localhost:20128"
+    base := "http://localhost:24026"
 
     health, _ := callTool(base, "health", nil)
     fmt.Println("Health:", health)
@@ -618,4 +618,4 @@ mcp-server/
 
 ## License
 
-Part of [OmniRoute](https://github.com/diegosouzapw/OmniRoute) — MIT License.
+Part of [EverSync](https://github.com/everson-junior/EverSync) — MIT License.

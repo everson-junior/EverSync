@@ -17,12 +17,15 @@ test("featureDisabledError carries the featureName", async () => {
   assert.equal("IS_MINIMAL_BUILD" in mod, false);
 });
 
-test("install.stub.ts: installCert / uninstallCert throw FeatureDisabledError", async () => {
+test("install.stub.ts: installCert / uninstallCert / installCertResult throw FeatureDisabledError", async () => {
   const stub = await import("../../../src/mitm/cert/install.stub.ts");
   await assert.rejects(() => stub.installCert("pw", "/tmp/x"), /mitm-cert-install/);
   await assert.rejects(() => stub.uninstallCert("pw", "/tmp/x"), /mitm-cert-install/);
+  await assert.rejects(() => stub.installCertResult("pw", "/tmp/x"), /mitm-cert-install/);
+  await assert.rejects(() => stub.installCaCert("pw", "/tmp/x"), /mitm-cert-install/);
   // checkCertInstalled returns false (does not throw — used by render paths)
   assert.equal(await stub.checkCertInstalled("/tmp/x"), false);
+  assert.equal(stub.classifyCertInstallError("err"), "environment");
 });
 
 test("keychain-reader.stub.ts: discoverZedCredentials / getZedCredential throw", async () => {
@@ -42,8 +45,13 @@ test("cloudSync.stub.ts: syncToCloud soft-fails with feature-disabled message", 
   await assert.rejects(() => stub.fetchWithTimeout(), /cloud-sync/);
 });
 
-test("ninerouter.stub.ts: install / resolveSpawnArgs throw FeatureDisabledError", async () => {
+test("ninerouter.stub.ts: install / update / uninstall / resolveSpawnArgs throw FeatureDisabledError", async () => {
   const stub = await import("../../../src/lib/services/installers/ninerouter.stub.ts");
   await assert.rejects(() => stub.installNinerouter(), /9router-installer/);
+  await assert.rejects(() => stub.install(), /9router-installer/);
+  await assert.rejects(() => stub.update(), /9router-installer/);
+  await assert.rejects(() => stub.uninstall(), /9router-installer/);
+  assert.equal(await stub.getInstalledVersion(), null);
+  assert.equal(await stub.getLatestVersion(), null);
   assert.throws(() => stub.resolveSpawnArgs("api-key", 20130), /9router-installer/);
 });

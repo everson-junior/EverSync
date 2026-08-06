@@ -14,7 +14,7 @@ export function resolveProviderPluginManifestUrl(origin?: string | null): string
   }
 
   const host = process.env.HOST || "127.0.0.1";
-  const port = process.env.PORT || process.env.DASHBOARD_PORT || process.env.API_PORT || "20128";
+  const port = process.env.PORT || process.env.DASHBOARD_PORT || process.env.API_PORT || "24026";
   const protocol = process.env.OMNIROUTE_PUBLIC_PROTOCOL || "http";
   return `${protocol}://${host}:${port}${PROVIDER_PLUGIN_MANIFEST_PATH}`;
 }

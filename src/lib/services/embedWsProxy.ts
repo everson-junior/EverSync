@@ -29,7 +29,7 @@ import { getSupervisor } from "./registry";
 import { getOrCreateApiKey } from "./apiKey";
 
 const DEFAULT_HOST = "127.0.0.1";
-const DEFAULT_PORT = 20131;
+const DEFAULT_PORT = 23028;
 
 /** Maximum concurrent WebSocket bridges per service name. */
 const MAX_CONNECTIONS_PER_SERVICE = 50;

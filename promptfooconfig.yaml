@@ -2,7 +2,7 @@ description: OmniRoute LLM red-team — injection guard coverage + quality rubri
 providers:
   - id: https
     config:
-      url: "{{env.OMNIROUTE_URL | default('http://localhost:20128')}}/v1/chat/completions"
+      url: "{{env.OMNIROUTE_URL | default('http://localhost:24026')}}/v1/chat/completions"
       method: POST
       headers:
         Content-Type: application/json

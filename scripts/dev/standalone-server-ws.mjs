@@ -67,7 +67,7 @@ function deriveLiveWsPath() {
 const LIVE_WS_PATH = deriveLiveWsPath();
 
 function proxyLiveWs(req, socket, head) {
-  const targetPort = parseInt(process.env.LIVE_WS_PORT || "20132", 10);
+  const targetPort = parseInt(process.env.LIVE_WS_PORT || "24010", 10);
   const targetSocket = net.connect(targetPort, "127.0.0.1", () => {
     let rawRequest = `${req.method} ${req.url} HTTP/${req.httpVersion}\r\n`;
     for (const [key, val] of Object.entries(req.headers)) {
@@ -91,10 +91,10 @@ function proxyLiveWs(req, socket, head) {
 function wrapUpgradeListener(server, listener) {
   return async function responsesWsAwareUpgrade(req, socket, head) {
     try {
-      // If this server IS the LiveWS server (port 20132), the ws library's
+      // If this server IS the LiveWS server (port 24010), the ws library's
       // own upgrade handler should process the request directly — proxying
-      // /live-ws back to 127.0.0.1:20132 would create an infinite self-loop.
-      const liveWsPort = parseInt(process.env.LIVE_WS_PORT || "20132", 10);
+      // /live-ws back to 127.0.0.1:24010 would create an infinite self-loop.
+      const liveWsPort = parseInt(process.env.LIVE_WS_PORT || "24010", 10);
       if (getPort(server) === liveWsPort) {
         return listener.call(this, req, socket, head);
       }

@@ -7,7 +7,7 @@
  *   node scripts/start-ws-server.mjs
  *
  * Environment variables:
- *   LIVE_WS_PORT       — WebSocket server port (default: 20132)
+ *   LIVE_WS_PORT       — WebSocket server port (default: 24010)
  *   LIVE_WS_HOST       — WebSocket server host (default: 127.0.0.1)
  *   OMNIROUTE_ENABLE_LIVE_WS — Set to "0" or "false" to disable
  */
@@ -85,7 +85,7 @@ async function main() {
 
   const { startLiveDashboardServer } = await import("../src/server/ws/liveServer.ts");
 
-  const port = parseInt(process.env.LIVE_WS_PORT || "20132", 10);
+  const port = parseInt(process.env.LIVE_WS_PORT || "24010", 10);
   const host = process.env.LIVE_WS_HOST || "127.0.0.1";
 
   console.log(`[LiveWS] Starting dashboard WebSocket server on ${host}:${port}...`);

@@ -47,13 +47,15 @@ export function useTheme() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme, initTheme]);
 
-  // Compute isDark from current state (no effect needed)
+  // Compute isDark and isCloud from current state (no effect needed)
   const isDark = theme === "dark" || (theme === "system" && systemPrefersDark);
+  const isCloud = theme === "cloud";
 
   return {
     theme,
     setTheme,
     toggleTheme,
     isDark,
+    isCloud,
   };
 }

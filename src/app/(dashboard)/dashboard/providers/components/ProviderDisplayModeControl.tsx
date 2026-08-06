@@ -92,10 +92,10 @@ export default function ProviderDisplayModeControl({
             title={option.title}
             data-testid={`provider-display-mode-${option.mode}`}
             data-active={isActive ? "true" : "false"}
-            className={`inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors ${
+            className={`inline-flex h-7 items-center gap-1.5 rounded-md px-2.5 text-xs font-medium transition-colors cursor-pointer ${
               isActive
-                ? "bg-bg-primary text-text-main shadow-sm"
-                : "text-text-muted hover:bg-bg-primary/70 hover:text-text-main"
+                ? "bg-surface text-text-main shadow-sm border border-border/40"
+                : "text-text-muted hover:bg-surface/50 hover:text-text-main"
             } ${option.disabled ? "cursor-not-allowed opacity-50" : ""}`}
           >
             <input

@@ -20,6 +20,7 @@
 @source not "../../.claude-memory";
 
 @custom-variant dark (&:where(.dark, .dark *));
+@custom-variant cloud (&:where(.cloud, .cloud *));
 
 /* Fumadocs sidebar width override */
 :root {
@@ -161,6 +162,78 @@
   --table-row-zebra: rgba(255, 255, 255, 0.02);
   --table-row-hover: rgba(255, 255, 255, 0.04);
   --table-cell-border: rgba(255, 255, 255, 0.04);
+}
+
+.cloud {
+  /* Cloud Mode Theme (EverSync Deep Blue + Amethyst Purple & Electric Cyan) */
+  color-scheme: dark;
+  --color-primary: #8a5cf5;
+  --color-primary-hover: #00d2ff;
+
+  --color-accent: #4265f6;
+  --color-accent-hover: #00d2ff;
+  --color-accent-light: #8a5cf5;
+
+  --color-bg: #081627;
+  --color-bg-alt: #0b1e36;
+  --color-bg-primary: #081627;
+  --color-bg-subtle: #0b1e36;
+  --color-surface: #0e2440;
+  --color-card: #0e2440;
+  --color-sidebar: #0a1a2e;
+  --color-border: rgba(0, 210, 255, 0.16);
+  --color-text-main: #ffffff;
+  --color-text-primary: #ffffff;
+  --color-text-muted: #a0c4e8;
+
+  /* Fumadocs theme mapping */
+  --color-fd-background: #081627;
+  --color-fd-foreground: #ffffff;
+  --color-fd-muted: #0b1e36;
+  --color-fd-muted-foreground: #a0c4e8;
+  --color-fd-popover: #0e2440;
+  --color-fd-popover-foreground: #ffffff;
+  --color-fd-card: #0e2440;
+  --color-fd-card-foreground: #ffffff;
+  --color-fd-border: rgba(0, 210, 255, 0.16);
+  --color-fd-primary: #8a5cf5;
+  --color-fd-primary-foreground: #ffffff;
+  --color-fd-secondary: #0b1e36;
+  --color-fd-secondary-foreground: #ffffff;
+  --color-fd-accent: rgba(0, 210, 255, 0.15);
+  --color-fd-accent-foreground: #ffffff;
+  --color-fd-ring: #00d2ff;
+
+  /* Cloud shadows */
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(8, 22, 39, 0.5);
+  --shadow-warm: 0 2px 14px -2px rgba(138, 92, 245, 0.35);
+  --shadow-elevated: 0 12px 28px -4px rgba(0, 210, 255, 0.2);
+
+  /* Graph-paper wallpaper grid */
+  --grid-line: rgba(0, 210, 255, 0.08);
+  --section-alt: rgba(138, 92, 245, 0.04);
+  --surface-2: #14335c;
+
+  /* Data-table surfaces */
+  --table-header-bg: rgba(8, 22, 39, 0.95);
+  --table-row-zebra: rgba(0, 210, 255, 0.03);
+  --table-row-hover: rgba(0, 210, 255, 0.08);
+  --table-cell-border: rgba(0, 210, 255, 0.08);
+}
+
+.bg-cloud-gradient {
+  background: linear-gradient(
+    90deg,
+    #8a5cf5 0%,
+    #4265f6 30%,
+    #081627 55%,
+    #00d2ff 85%,
+    #030a12 100%
+  );
+}
+
+.bg-cloud-brand-gradient {
+  background: linear-gradient(45deg, #8a5cf5, #4265f6, #00d2ff);
 }
 
 @theme inline {
@@ -314,8 +387,16 @@ body.electron-macos {
   background-color: rgba(255, 255, 255, 0.08);
 }
 
+.cloud *::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 210, 255, 0.15);
+}
+
 .dark *::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.2);
+}
+
+.cloud *::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 210, 255, 0.35);
 }
 
 /* Firefox support */
@@ -326,6 +407,10 @@ body.electron-macos {
 
 .dark * {
   scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+.cloud * {
+  scrollbar-color: rgba(0, 210, 255, 0.15) transparent;
 }
 
 /* Keep .custom-scrollbar alias for backward compatibility */
@@ -340,6 +425,10 @@ body.electron-macos {
 
 .dark .bg-hero-gradient {
   background: linear-gradient(180deg, #111520 0%, #0b0e14 100%);
+}
+
+.cloud .bg-hero-gradient {
+  background: linear-gradient(180deg, #0b1e36 0%, #081627 100%);
 }
 
 /* Material Symbols */
@@ -437,6 +526,10 @@ button .material-symbols-outlined,
 
 .dark .bg-vibrancy {
   background: rgba(16, 20, 30, 0.72);
+}
+
+.cloud .bg-vibrancy {
+  background: rgba(8, 22, 39, 0.85);
 }
 
 /* macOS Traffic Lights */

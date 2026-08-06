@@ -114,6 +114,8 @@ const ENV_VAR_ALLOWLIST = new Set([
   "LINUX_GPG_KEY", // electron AppImage signing key, CI/build only (ELECTRON_GUIDE.md)
   "BRANCH_LOCK_TOKEN", // release branch-protection ops token (QUALITY_GATE_PLAYBOOK.md)
   "NEXT_LOCALE", // next-intl locale cookie name (I18N.md)
+  "MITM_PORT", // sequential port reference (PORTS.md)
+  "SOCKS5_PORT", // sequential port reference (PORTS.md)
 ]);
 
 // Common pluralized / column-header all-caps that aren't env vars
@@ -222,6 +224,7 @@ const ENV_VAR_DENYLIST = new Set([
   "AGENT_SKILL",
   "AGENT_SKILLS",
   "AGENT_BRIDGE",
+  "CLOUD_AGENTS",
   "MENU_ITEM",
   "MENU_ITEMS",
   "MENU_ICON",

@@ -36,8 +36,8 @@ export default function SegmentedControl({
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex items-center p-1 rounded-lg",
-        "bg-black/5 dark:bg-white/5",
+        "inline-flex items-center p-1 rounded-lg border border-border/40",
+        "bg-bg-subtle",
         className
       )}
     >
@@ -49,12 +49,12 @@ export default function SegmentedControl({
           tabIndex={value === option.value ? 0 : -1}
           onClick={() => onChange(option.value)}
           className={cn(
-            "px-4 rounded-md font-medium transition-all",
+            "px-4 rounded-md font-medium transition-all cursor-pointer",
             sizes[size],
             value === option.value
-              ? "bg-white dark:bg-white/10 text-text-main shadow-sm"
+              ? "bg-surface text-text-main shadow-sm border border-border/50 font-semibold"
               : "text-text-muted hover:text-text-main",
-            option.icon && "flex items-center",
+            option.icon && "flex items-center"
           )}
         >
           {option.icon && (

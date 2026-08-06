@@ -34,7 +34,7 @@ function toHex(bytes: Uint8Array): string {
 export function renameProcessTitle(currentTitle: string): string {
   if (!currentTitle) return currentTitle;
   if (!currentTitle.startsWith("next-server")) return currentTitle;
-  return `omniroute${currentTitle.slice("next-server".length)}`;
+  return `eversync${currentTitle.slice("next-server".length)}`;
 }
 
 /**
@@ -281,7 +281,7 @@ export async function registerNodejs(): Promise<void> {
   // that cause every connection to be skipped by getProviderCredentials(), making
   // all subsequent requests time out at Bottleneck's maxWaitMs (120 s default).
   // Terminal states (banned / expired / credits_exhausted) are intentionally kept.
-  // See: https://github.com/diegosouzapw/OmniRoute/issues/3625 (Part A)
+  // See: https://github.com/everson-junior/EverSync/issues/3625 (Part A)
   try {
     const { clearStaleCrashCooldowns } = await import("@/lib/db/providers");
     const { cleared } = clearStaleCrashCooldowns();
@@ -592,7 +592,7 @@ export async function registerNodejs(): Promise<void> {
           console.warn("[STARTUP] backup schedule job failed to start (non-fatal):", msg);
         }),
 
-      // Real-time dashboard WebSocket daemon (port 20132): powers Combo Studio Live,
+      // Real-time dashboard WebSocket daemon (port 24010): powers Combo Studio Live,
       // the Home live-pulse, and Live Compression. Side-effect import triggers the
       // flag-gated auto-start (OMNIROUTE_ENABLE_LIVE_WS, default ON).
       import("@/server/ws/liveServer")

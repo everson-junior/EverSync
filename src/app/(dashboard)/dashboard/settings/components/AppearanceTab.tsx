@@ -16,7 +16,7 @@ import { PIN_PROVIDER_QUOTA_TO_HOME_KEY } from "@/shared/constants/homeWidgets";
 import AccountEmailVisibilitySetting from "./AccountEmailVisibilitySetting";
 
 export default function AppearanceTab() {
-  const { theme, setTheme, isDark } = useTheme();
+  const { theme, setTheme, isDark, isCloud } = useTheme();
   const { colorTheme, customColor, setColorTheme, setCustomColorTheme } = useThemeStore();
   const t = useTranslations("settings");
 
@@ -67,16 +67,15 @@ export default function AppearanceTab() {
   const themeOptionLabels: Record<string, string> = {
     light: t("themeLight"),
     dark: t("themeDark"),
+    cloud: t("themeCloud"),
     system: t("themeSystem"),
   };
 
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error ${res.status}`);
-        }
-        return res.json();
+        if (res.ok) return res.json();
+        throw new Error("Failed to load settings");
       })
       .then((data) => {
         setSettings(data);
@@ -156,16 +155,19 @@ export default function AppearanceTab() {
             <p className="font-medium">{t("darkMode")}</p>
             <p className="text-sm text-text-muted">{t("switchThemes")}</p>
           </div>
-          <Toggle checked={isDark} onChange={() => setTheme(isDark ? "light" : "dark")} />
+          <Toggle
+            checked={isDark || isCloud}
+            onChange={() => setTheme(isDark || isCloud ? "light" : "dark")}
+          />
         </div>
 
         <div className="pt-4 border-t border-border">
           <div
             role="tablist"
             aria-label={t("themeSelectionAria")}
-            className="inline-flex p-1 rounded-lg bg-black/5 dark:bg-white/5"
+            className="inline-flex p-1 rounded-lg bg-black/5 dark:bg-white/5 cloud:bg-white/5"
           >
-            {["light", "dark", "system"].map((option) => (
+            {["light", "dark", "cloud", "system"].map((option) => (
               <button
                 key={option}
                 role="tab"
@@ -174,12 +176,18 @@ export default function AppearanceTab() {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-all",
                   theme === option
-                    ? "bg-white dark:bg-white/10 text-text-main shadow-sm"
+                    ? "bg-white dark:bg-white/10 cloud:bg-white/10 text-text-main shadow-sm"
                     : "text-text-muted hover:text-text-main"
                 )}
               >
                 <span className="material-symbols-outlined text-[20px]" aria-hidden="true">
-                  {option === "light" ? "light_mode" : option === "dark" ? "dark_mode" : "contrast"}
+                  {option === "light"
+                    ? "light_mode"
+                    : option === "dark"
+                      ? "dark_mode"
+                      : option === "cloud"
+                        ? "cloud"
+                        : "contrast"}
                 </span>
                 <span>{themeOptionLabels[option] || option}</span>
               </button>

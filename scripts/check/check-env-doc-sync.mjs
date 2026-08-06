@@ -88,6 +88,7 @@ const IGNORE_FROM_CODE = new Set([
   // points at OmniRoute). A downstream client-tool var, not an OmniRoute server
   // input (src/shared/services/claudeCliConfig.ts, api/cli-tools/claude-settings).
   "ANTHROPIC_AUTH_TOKEN",
+  "NEXT_PUBLIC_OMNIROUTE_BUILD_PROFILE",
   // CI providers (set by the runner).
   "GITHUB_BASE_REF",
   "GITHUB_BASE_SHA",

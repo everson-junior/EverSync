@@ -27,7 +27,7 @@ function getWsProtocol() {
     },
     cancel: { type: "cancel", id: "req-1" },
     live: {
-      port: parseInt(process.env.LIVE_WS_PORT || "20132", 10),
+      port: parseInt(process.env.LIVE_WS_PORT || "23027", 10),
       publicUrl: getLivePublicUrl(),
       path: getLiveWsPath(),
       protocol: "json",
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
         authType: auth.authType,
         protocol: getWsProtocol(),
         live: {
-          port: parseInt(process.env.LIVE_WS_PORT || "20132", 10),
+          port: parseInt(process.env.LIVE_WS_PORT || "23027", 10),
           publicUrl: getLivePublicUrl(),
           path: getLiveWsPath(),
           protocol: "json",

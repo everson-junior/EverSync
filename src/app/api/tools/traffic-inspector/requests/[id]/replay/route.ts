@@ -15,7 +15,7 @@ interface Params {
   params: Promise<{ id: string }>;
 }
 
-const OMNIROUTE_BASE = process.env.OMNIROUTE_BASE_URL ?? "http://127.0.0.1:20128";
+const OMNIROUTE_BASE = process.env.OMNIROUTE_BASE_URL ?? "http://127.0.0.1:24026";
 
 export async function POST(_request: Request, { params }: Params): Promise<Response> {
   const { id } = await params;

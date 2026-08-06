@@ -1489,6 +1489,7 @@
     "openQuickNavigation": "Abrir navegação rápida",
     "switchToLightMode": "Alternar para o modo claro",
     "switchToDarkMode": "Alternar para o modo escuro",
+    "switchToCloudMode": "Alternar para o modo nuvem",
     "language": "Idioma",
     "providers": "Provedores",
     "providerDescription": "Gerencie suas conexões de provedores de IA",
@@ -2855,7 +2856,7 @@
           },
           "3": {
             "title": "Base URL",
-            "desc": "http://127.0.0.1:20128/v1"
+            "desc": "http://127.0.0.1:24026/v1"
           },
           "4": {
             "title": "API Key",
@@ -6273,10 +6274,11 @@
     "advanced": "Avançado",
     "localMode": "Modo Local — Todos os dados armazenados na sua máquina",
     "settingsSectionsAria": "Seções de configurações",
-    "switchThemes": "Alternar entre temas claro e escuro",
+    "switchThemes": "Alternar entre os temas claro, escuro e nuvem",
     "themeSelectionAria": "Seleção de tema",
     "themeLight": "Claro",
     "themeDark": "Escuro",
+    "themeCloud": "Nuvem",
     "themeSystem": "Sistema",
     "endpointTunnelVisibility": "Visibilidade do túnel de endpoint",
     "endpointTunnelVisibilityDesc": "Oculte os controles do túnel na página Endpoint sem alterar o estado do túnel.",

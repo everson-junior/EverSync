@@ -1,7 +1,7 @@
 /**
  * Live Dashboard WebSocket Server
  *
- * Separate process (runs alongside Next.js on port 20132).
+ * Separate process (runs alongside Next.js on port 24010).
  * Forwards EventBus events to subscribed dashboard clients.
  *
  * Protocol:
@@ -37,7 +37,7 @@ import {
 
 // ── Config ────────────────────────────────────────────────────────────────
 
-const DEFAULT_PORT = 20132;
+const DEFAULT_PORT = 23027;
 // Loopback by default. Opt-in to LAN exposure via LIVE_WS_HOST=0.0.0.0 — the
 // caller is then responsible for fronting it with a TLS terminator + origin
 // allow-list. Mirrors the route guard "local-only by default" posture.
@@ -608,9 +608,7 @@ export async function startLiveDashboardServer(
 // Build/test environments never auto-start regardless of the flag.
 
 function isBuildOrTest(): boolean {
-  return (
-    isBuildProcess() || isAutomatedTestProcess()
-  );
+  return isBuildProcess() || isAutomatedTestProcess();
 }
 
 export function isLiveWsEnabled(): boolean {

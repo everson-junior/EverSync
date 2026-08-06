@@ -19,6 +19,12 @@ const t = (key: string) => key;
 describe("ProviderPageHeader — Kimi partner-link note", () => {
   let container: HTMLDivElement | null = null;
 
+  beforeEach(() => {
+    (
+      globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT?: boolean }
+    ).IS_REACT_ACT_ENVIRONMENT = true;
+  });
+
   afterEach(() => {
     if (container) {
       document.body.removeChild(container);
@@ -26,11 +32,11 @@ describe("ProviderPageHeader — Kimi partner-link note", () => {
     }
   });
 
-  function renderHeader(id: string, name: string, website: string) {
+  async function renderHeader(id: string, name: string, website: string) {
     container = document.createElement("div");
     document.body.appendChild(container);
     const root = createRoot(container);
-    act(() => {
+    await act(async () => {
       root.render(
         <ProviderPageHeader
           providerId={id}
@@ -47,16 +53,30 @@ describe("ProviderPageHeader — Kimi partner-link note", () => {
   }
 
   it.each([
-    ["moonshot", "Kimi", "https://platform.kimi.ai?aff=omniroute"],
-    ["kimi-coding", "Kimi Code CLI", "https://www.kimi.com/code?aff=omniroute"],
-    ["kimi-web", "Kimi Web", "https://www.kimi.com/code?aff=omniroute"],
-  ])("flags the %s header link as a partner link", (id, name, website) => {
-    const el = renderHeader(id, name, website);
+    [
+      "moonshot",
+      "Kimi",
+      "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR",
+    ],
+    [
+      "kimi-coding",
+      "Kimi Code CLI",
+      "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR",
+    ],
+    [
+      "kimi-web",
+      "Kimi Web",
+      "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR",
+    ],
+  ])("flags the %s header link as a partner link", async (id, name, website) => {
+    const el = await renderHeader(id, name, website);
     // The component also renders a "Back to Providers" <Link> above the
     // website title link — target the website anchor specifically, not the
     // first <a> in the tree.
-    const link = el.querySelector(`a[href="${website}"]`);
-    expect(link).not.toBeNull();
+    const link = Array.from(el.querySelectorAll("a")).find(
+      (a) => a.getAttribute("href") === website
+    );
+    expect(link).not.toBeUndefined();
     expect(link?.getAttribute("title")).toBe(
       "Partner link — supports OmniRoute at no extra cost to you"
     );
@@ -66,8 +86,8 @@ describe("ProviderPageHeader — Kimi partner-link note", () => {
     expect(el.textContent).toContain("Partner link — supports OmniRoute at no extra cost to you");
   });
 
-  it("does NOT flag an unrelated provider's website link as a partner link", () => {
-    const el = renderHeader("openai", "OpenAI", "https://openai.com");
+  it("does NOT flag an unrelated provider's website link as a partner link", async () => {
+    const el = await renderHeader("openai", "OpenAI", "https://openai.com");
     const link = el.querySelector(`a[href="https://openai.com"]`);
     expect(link).not.toBeNull();
     expect(link?.getAttribute("title")).toBeNull();

@@ -71,10 +71,10 @@ describe("useDisplayBaseUrl", () => {
 
   it("classifies public domains separately from local and private addresses", () => {
     expect(isPublicDisplayBaseUrl("https://api.example.com")).toBe(true);
-    expect(isPublicDisplayBaseUrl("http://localhost:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://192.168.1.25:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://100.88.4.55:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://[::1]:20128")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://localhost:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://192.168.1.25:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://100.88.4.55:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://[::1]:23026")).toBe(false);
   });
 
   it("classifies IPv4 private ranges at their exact boundaries", () => {
@@ -114,25 +114,25 @@ describe("useDisplayBaseUrl", () => {
     ];
 
     for (const [host, expectedPublic] of cases) {
-      expect(isPublicDisplayBaseUrl(`http://${host}:20128`)).toBe(expectedPublic);
+      expect(isPublicDisplayBaseUrl(`http://${host}:23026`)).toBe(expectedPublic);
     }
   });
 
   it("classifies IPv6 special ranges while keeping the check scoped to actual IPv6 hosts", () => {
-    expect(isPublicDisplayBaseUrl("http://[::]:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://[::1]:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://[fc00::1]:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://[fd12::1]:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://[fe80::1]:20128")).toBe(false);
-    expect(isPublicDisplayBaseUrl("http://[2001:db8::1]:20128")).toBe(true);
+    expect(isPublicDisplayBaseUrl("http://[::]:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://[::1]:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://[fc00::1]:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://[fd12::1]:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://[fe80::1]:23026")).toBe(false);
+    expect(isPublicDisplayBaseUrl("http://[2001:db8::1]:23026")).toBe(true);
     // A hostname that merely STARTS WITH "fd"/"fc" must stay public — the ULA/
     // link-local checks are IPv6-only and must not leak into hostname matching.
-    expect(isPublicDisplayBaseUrl("http://fdroid.example.com:20128")).toBe(true);
-    expect(isPublicDisplayBaseUrl("http://fcbar.example.com:20128")).toBe(true);
+    expect(isPublicDisplayBaseUrl("http://fdroid.example.com:23026")).toBe(true);
+    expect(isPublicDisplayBaseUrl("http://fcbar.example.com:23026")).toBe(true);
   });
 
   it("keeps a configured public URL when the browser is on a local address", () => {
-    expect(resolveDisplayBaseUrl("https://api.example.com/", "http://localhost:20128")).toBe(
+    expect(resolveDisplayBaseUrl("https://api.example.com/", "http://localhost:23026")).toBe(
       "https://api.example.com"
     );
   });
@@ -179,7 +179,7 @@ describe("useDisplayBaseUrl", () => {
   });
 
   it("prefers a public browser origin over a loopback build-time value", async () => {
-    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "http://localhost:20128");
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "http://localhost:23026");
     vi.stubGlobal("location", { origin: "https://api.example.com" });
 
     const { useDisplayBaseUrl } = await import("../useDisplayBaseUrl");
@@ -263,7 +263,7 @@ describe("useDisplayBaseUrl", () => {
     vi.stubEnv("NEXT_PUBLIC_BASE_URL", "");
 
     // Stub window.location with trailing slash on origin
-    vi.stubGlobal("location", { origin: "http://192.168.13.62:20128/" });
+    vi.stubGlobal("location", { origin: "http://192.168.13.62:23026/" });
 
     const { useDisplayBaseUrl } = await import("../useDisplayBaseUrl");
 
@@ -281,7 +281,7 @@ describe("useDisplayBaseUrl", () => {
     });
 
     expect(container.querySelector('[data-testid="value"]')?.textContent).toBe(
-      "http://192.168.13.62:20128"
+      "http://192.168.13.62:23026"
     );
   });
 

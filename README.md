@@ -7,7 +7,7 @@
 
 ## 📌 Visão Geral
 
-O **EverSync** é uma versão otimizada, independente e enxuta do roteador de IA unificado. Esta versão **V1.0.0** foca na experiência essencial (Build Profile `Basic`), reduzindo o tamanho do bundle e a carga cognitiva da interface do usuário ao manter ativos e acessíveis apenas os módulos do preset **Minimal**.
+O **EverSync** é uma versão otimizada, independente e enxuta do roteador de IA unificado com suporte a 290 provedores de IA. Esta versão **V1.0.0** foca na experiência essencial (Build Profile `Basic`), reduzindo o tamanho do bundle e a carga cognitiva da interface do usuário ao manter ativos e acessíveis apenas os módulos do preset **Minimal**.
 
 ---
 

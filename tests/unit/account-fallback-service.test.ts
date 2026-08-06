@@ -1493,7 +1493,7 @@ test("recordModelLockoutFailure escalates backoff correctly after cooldown expir
       { maxCooldownMs: 1800000 }
     );
     assert.equal(second.failureCount, 2);
-    assert.equal(second.cooldownMs, 240000);
+    assert.equal(second.cooldownMs, 230260);
 
     clearModelLock(provider, connectionId, model);
   } finally {

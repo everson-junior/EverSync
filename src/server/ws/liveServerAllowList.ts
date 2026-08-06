@@ -17,9 +17,15 @@ const DEFAULT_HOST = "127.0.0.1";
  * These match the loopback HTTP listener at port 20128.
  */
 export const DEFAULT_ALLOWED_ORIGINS: readonly string[] = Object.freeze([
+  "http://127.0.0.1:23026",
+  "http://localhost:23026",
+  "http://[::1]:23026",
   "http://127.0.0.1:20128",
   "http://localhost:20128",
   "http://[::1]:20128",
+  "http://127.0.0.1:24026",
+  "http://localhost:24026",
+  "http://[::1]:24026",
 ]);
 
 /**
@@ -39,8 +45,26 @@ export function parseCsvEnv(value: string | undefined | null): Set<string> {
  * Build the static origin allow-list from defaults + LIVE_WS_ALLOWED_ORIGINS.
  */
 export function buildAllowedOrigins(env: NodeJS.ProcessEnv = process.env): Set<string> {
+  const port = env.PORT || env.OMNIROUTE_PORT || "23026";
+  const dynamicOrigins = [
+    `http://127.0.0.1:${port}`,
+    `http://localhost:${port}`,
+    `http://[::1]:${port}`,
+  ];
+  if (env.NEXT_PUBLIC_BASE_URL) {
+    try {
+      const u = new URL(env.NEXT_PUBLIC_BASE_URL);
+      dynamicOrigins.push(u.origin);
+    } catch {}
+  }
+  if (env.BASE_URL) {
+    try {
+      const u = new URL(env.BASE_URL);
+      dynamicOrigins.push(u.origin);
+    } catch {}
+  }
   const extra = parseCsvEnv(env.LIVE_WS_ALLOWED_ORIGINS);
-  return new Set([...DEFAULT_ALLOWED_ORIGINS, ...extra]);
+  return new Set([...DEFAULT_ALLOWED_ORIGINS, ...dynamicOrigins, ...extra]);
 }
 
 /**
@@ -85,8 +109,8 @@ export function originHostMatches(origin: string, allowedHosts: Set<string>): bo
  *     browser-side check.
  *
  *   - When `origin` is present, we accept it if it matches an entry in the
- *     static origin list (defaults + LIVE_WS_ALLOWED_ORIGINS) or if its
- *     host matches an entry in the LAN allow-list (LIVE_WS_ALLOWED_HOSTS).
+ *     static origin list (defaults + LIVE_WS_ALLOWED_ORIGINS), matches any loopback
+ *     origin, or if its host matches an entry in the LAN allow-list (LIVE_WS_ALLOWED_HOSTS).
  */
 export function isOriginAllowed(
   origin: string | undefined,
@@ -102,5 +126,26 @@ export function isOriginAllowed(
   }
   if (allowedOrigins.has(origin)) return true;
   if (originHostMatches(origin, allowedHosts)) return true;
+
+  // Allow any loopback origin (e.g. http://localhost:23026, http://127.0.0.1:23026)
+  const parsed = originHost(origin);
+  if (
+    parsed &&
+    (parsed.hostname === "localhost" ||
+      parsed.hostname === "127.0.0.1" ||
+      parsed.hostname === "::1" ||
+      parsed.hostname === "[::1]")
+  ) {
+    return true;
+  }
+
+  // Allow Electron internal app/file origins when bound to loopback host
+  if (origin === "file://" || origin === "null" || origin.startsWith("app://")) {
+    const host = env.LIVE_WS_HOST || DEFAULT_HOST;
+    if (host === "127.0.0.1" || host === "::1" || host === "localhost") {
+      return true;
+    }
+  }
+
   return false;
 }

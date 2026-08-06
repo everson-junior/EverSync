@@ -296,7 +296,8 @@ export const WEB_COOKIE_PROVIDERS = {
     // so the "Open {host}" credential guide in WebSessionCredentialGuide.tsx /
     // AddApiKeyModal.tsx is unaffected: origin, not path, decides localStorage
     // access). Was `https://www.kimi.com` (no aff attribution).
-    website: "https://www.kimi.com/code?aff=omniroute",
+    website:
+      "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR",
     authHint:
       "Paste access_token from www.kimi.com DevTools → Application → Local Storage. A legacy kimi-auth cookie is also accepted.",
     subscriptionRisk: true,
@@ -391,7 +392,7 @@ export const WEB_COOKIE_PROVIDERS = {
     riskNoticeVariant: "webCookie",
     authHint: "Paste the full Cookie header from chat.z.ai (must include the token=<JWT> cookie)",
   },
-  "promptql": {
+  promptql: {
     id: "promptql",
     alias: "pql",
     name: "PromptQL (Unofficial/Experimental)",

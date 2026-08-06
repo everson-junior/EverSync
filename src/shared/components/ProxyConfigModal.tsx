@@ -23,7 +23,9 @@ const BUILD_TIME_SOCKS5 = !["false", "0", "no", "off"].includes(
   (process.env.NEXT_PUBLIC_ENABLE_SOCKS5_PROXY ?? "").trim().toLowerCase()
 );
 export function buildProxyTypes(socks5Enabled: boolean) {
-  return socks5Enabled ? ALL_PROXY_TYPES : ALL_PROXY_TYPES.filter((type) => type.value !== "socks5");
+  return socks5Enabled
+    ? ALL_PROXY_TYPES
+    : ALL_PROXY_TYPES.filter((type) => type.value !== "socks5");
 }
 
 type ProxyConfigLevel = "global" | "provider" | "combo" | "key";
@@ -196,7 +198,9 @@ export default function ProxyConfigModal({
             const assignedProxy = registryItems.find((item) => item.id === target.proxyId);
             if (assignedProxy?.source === DASHBOARD_CUSTOM_PROXY_SOURCE) {
               const normalizedType = String(assignedProxy.type || "http").toLowerCase();
-              const hasTypeOption = runtimeProxyTypes.some((entry) => entry.value === normalizedType);
+              const hasTypeOption = runtimeProxyTypes.some(
+                (entry) => entry.value === normalizedType
+              );
               setMode("custom");
               setProxyType(hasTypeOption ? normalizedType : runtimeProxyTypes[0]?.value || "http");
               setHost(assignedProxy.host || "");
@@ -593,9 +597,11 @@ export default function ProxyConfigModal({
                 onChange={(e) => setSelectedProxyId(e.target.value)}
                 className="w-full px-3 py-2.5 rounded-lg bg-bg-subtle border border-border text-sm text-text-primary"
               >
-                <option value="">{t("selectSavedProxyPlaceholder")}</option>
+                <option value="" className="bg-surface text-text-main">
+                  {t("selectSavedProxyPlaceholder")}
+                </option>
                 {sortedSavedProxies.map((item: any) => (
-                  <option key={item.id} value={item.id}>
+                  <option key={item.id} value={item.id} className="bg-surface text-text-main">
                     {item.name} ({item.type}://{item.host}:{item.port})
                   </option>
                 ))}
@@ -617,7 +623,7 @@ export default function ProxyConfigModal({
                       className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all ${
                         proxyType === t.value
                           ? "bg-primary text-white shadow-sm"
-                          : "text-text-muted hover:text-text-primary hover:bg-black/5 dark:hover:bg-white/5"
+                          : "text-text-muted hover:text-text-main hover:bg-border/30"
                       }`}
                     >
                       {t.label}

@@ -7,12 +7,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 const providers = await import("../../src/shared/constants/providers.ts");
-const featuredProviders = await import(
-  "../../src/app/(dashboard)/dashboard/providers/featuredProviders.ts"
-);
+const featuredProviders =
+  await import("../../src/app/(dashboard)/dashboard/providers/featuredProviders.ts");
 
-const KIMI_CODING_AFF_URL = "https://www.kimi.com/code?aff=omniroute";
-const KIMI_PLATFORM_AFF_URL = "https://platform.kimi.ai?aff=omniroute";
+const KIMI_CODING_AFF_URL =
+  "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR";
+const KIMI_PLATFORM_AFF_URL =
+  "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR";
 
 test("moonshot: id/alias/routing untouched, display name rebranded to 'Kimi'", () => {
   const moonshot = providers.APIKEY_PROVIDERS.moonshot;
@@ -69,8 +70,6 @@ test("no visible Kimi provider website field still points at the unattributed pl
 test("runtime endpoints are untouched by the rename/aff-link changes (moonshot API base URL still api.moonshot.ai)", async () => {
   // Guard against the aff-link change ever leaking into a runtime executor
   // config — website is a UI navigation field only, never a fetch target.
-  const registry = await import(
-    "../../open-sse/config/providers/registry/moonshot/index.ts"
-  );
+  const registry = await import("../../open-sse/config/providers/registry/moonshot/index.ts");
   assert.equal(registry.moonshotProvider.baseUrl, "https://api.moonshot.ai/v1/chat/completions");
 });

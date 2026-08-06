@@ -2238,7 +2238,7 @@ function derivePublicBaseUrl(
   if (headerBase) return headerBase;
   if (configuredBase) return configuredBase;
 
-  return `http://localhost:${process.env.PORT || 20128}`;
+  return `http://localhost:${process.env.PORT || 23026}`;
 }
 
 // ─── Image asset resolution ────────────────────────────────────────────────
@@ -2697,9 +2697,10 @@ async function pollForAsyncImage(
         const message = node?.message;
         const parts = message?.content?.parts;
         if (!Array.isArray(parts)) continue;
-        const pointers = extractImagePointers(parts).map(
-          (pointer) => ({ pointer, messageId: message?.id })
-        );
+        const pointers = extractImagePointers(parts).map((pointer) => ({
+          pointer,
+          messageId: message?.id,
+        }));
         if (pointers.length === 0) continue;
         const at = message?.create_time ?? 0;
         if (!newest || at >= newest.at) newest = { pointers, at };

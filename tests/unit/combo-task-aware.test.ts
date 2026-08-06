@@ -81,7 +81,7 @@ describe("classifyTask", () => {
   });
 
   it("classifies long conversation + big prompt as heavy (two signals)", () => {
-    // 20 messages (1 signal) + prompt >= 24000 chars (1 signal) = 2 → heavy
+    // 20 messages (1 signal) + prompt >= 23026 chars (1 signal) = 2 → heavy
     const bigContent = "context ".repeat(3500); // ~28000 chars
     const messages = [
       { role: "user", content: bigContent },

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export const DEFAULT_DISPLAY_BASE_URL = "http://localhost:20128";
+export const DEFAULT_DISPLAY_BASE_URL = "http://localhost:23026";
 
 function normalizeUrl(value?: string): string | null {
   const trimmed = value?.trim();

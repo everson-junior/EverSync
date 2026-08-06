@@ -42,7 +42,7 @@
 set -euo pipefail
 
 # ---- Configuração (com defaults seguros) ------------------------------------
-OMNIROUTE_WS_BASE="${OMNIROUTE_WS_BASE:-http://127.0.0.1:20128/v1}"  # base do OmniRoute local
+OMNIROUTE_WS_BASE="${OMNIROUTE_WS_BASE:-http://127.0.0.1:24026/v1}"  # base do OmniRoute local
 OMNIROUTE_WS_MODEL="${OMNIROUTE_WS_MODEL:-gpt-5.5}"                  # id PURO (sem "codex/")
 CODEX_WS_HOME="${CODEX_WS_HOME:-$HOME/.codex-ws}"                    # CODEX_HOME isolado da Cloud
 

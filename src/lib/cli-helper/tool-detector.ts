@@ -74,7 +74,7 @@ function isConfigured(content: string, baseUrl: string): boolean {
   const normalized = baseUrl.replace(/\/+$/, "");
   return (
     content.includes(normalized) ||
-    content.includes("localhost:20128") ||
+    content.includes("localhost:24026") ||
     content.includes("OMNIROUTE_BASE_URL")
   );
 }
@@ -151,7 +151,7 @@ export async function detectTool(id: string): Promise<DetectedTool | null> {
   const { installed, version } = await detectBinary(tool.id);
   const configPath = expandHome(tool.configPath);
   const configContents = await readConfigFile(tool.configPath);
-  const configured = !!configContents && isConfigured(configContents, "http://localhost:20128");
+  const configured = !!configContents && isConfigured(configContents, "http://localhost:24026");
 
   const result: DetectedTool = {
     id: tool.id,
@@ -172,8 +172,8 @@ export async function detectTool(id: string): Promise<DetectedTool | null> {
       Object.entries(roles).forEach(([role, info]) => {
         const usingOmni =
           info?.provider === "omniroute" ||
-          (info?.base_url || "").includes("20128") ||
-          (info?.base_url || "").includes("localhost:20128");
+          (info?.base_url || "").includes("24026") ||
+          (info?.base_url || "").includes("localhost:24026");
 
         richRoles[role] = {
           model: info.model,

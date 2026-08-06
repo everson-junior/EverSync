@@ -35,8 +35,8 @@ Key variables for development:
 
 | Variable               | Development Default      | Description           |
 | ---------------------- | ------------------------ | --------------------- |
-| `PORT`                 | `20128`                  | Server port           |
-| `NEXT_PUBLIC_BASE_URL` | `http://localhost:20128` | Base URL for frontend |
+| `PORT`                 | `23026`                  | Server port           |
+| `NEXT_PUBLIC_BASE_URL` | `http://localhost:24026` | Base URL for frontend |
 | `JWT_SECRET`           | (generate above)         | JWT signing secret    |
 | `INITIAL_PASSWORD`     | `CHANGEME`               | First login password  |
 | `APP_LOG_LEVEL`        | `info`                   | Log verbosity level   |
@@ -66,7 +66,7 @@ npm run start
 npm run build:release   # rm -rf .build dist && build + writes dist/BUILD_SHA
 
 # Common port configuration
-PORT=20128 NEXT_PUBLIC_BASE_URL=http://localhost:20128 npm run dev
+PORT=24026 NEXT_PUBLIC_BASE_URL=http://localhost:24026 npm run dev
 ```
 
 ### Build Output Layout
@@ -95,8 +95,8 @@ npm run build
 
 Default URLs:
 
-- **Dashboard**: `http://localhost:20128/dashboard`
-- **API**: `http://localhost:20128/v1`
+- **Dashboard**: `http://localhost:24026/dashboard`
+- **API**: `http://localhost:24026/v1`
 
 ---
 

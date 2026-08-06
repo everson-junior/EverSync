@@ -1,4 +1,4 @@
-const DEFAULT_OMNIROUTE_BASE_URL = "http://localhost:20128";
+const DEFAULT_OMNIROUTE_BASE_URL = "http://localhost:23026";
 
 type OmniRouteBaseUrlEnv = {
   OMNIROUTE_BASE_URL?: string;

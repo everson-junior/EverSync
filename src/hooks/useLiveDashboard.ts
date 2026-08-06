@@ -32,18 +32,18 @@ const BUILD_TIME_WS_PATH = deriveLiveWsPath(process.env.NEXT_PUBLIC_LIVE_WS_PUBL
 
 function getDefaultWsUrl(): string {
   if (BUILD_TIME_PUBLIC_WS_URL) return BUILD_TIME_PUBLIC_WS_URL;
-  if (typeof window === "undefined") return `ws://localhost:20132${BUILD_TIME_WS_PATH}`;
+  if (typeof window === "undefined") return `ws://localhost:23027${BUILD_TIME_WS_PATH}`;
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const { hostname } = window.location;
-  // Bug #1 fix: Use the WS server's actual port (20132) for both loopback
+  // Bug #1 fix: Use the WS server's actual port (23027) for both loopback
   // and non-loopback clients. Previously the non-loopback branch tried to
   // upgrade the HTTP port (window.location.host) which has no upgrade
   // handler in src/proxy.ts. If the user wants the upgrade to go through
   // Next.js (same-origin), they should explicitly pass `wsUrl`.
   if (hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1") {
-    return `${protocol}//${hostname}:20132${BUILD_TIME_WS_PATH}`;
+    return `${protocol}//${hostname}:23027${BUILD_TIME_WS_PATH}`;
   }
-  return `${protocol}//${hostname}:20132${BUILD_TIME_WS_PATH}`;
+  return `${protocol}//${hostname}:23027${BUILD_TIME_WS_PATH}`;
 }
 
 const DEFAULT_WS_URL = getDefaultWsUrl();

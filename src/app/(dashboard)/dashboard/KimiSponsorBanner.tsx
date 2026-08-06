@@ -9,7 +9,8 @@ import { shouldShowKimiSponsorBanner } from "./kimiSponsorBannerGate";
 // Official Kimi partnership tracking link — keep in sync with README.md's
 // Sponsors section and the aff links wired in the providers onboarding UI
 // (ProviderPageHeader.tsx).
-const KIMI_CODING_AFF_URL = "https://www.kimi.com/code?aff=omniroute";
+const KIMI_CODING_AFF_URL =
+  "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR";
 
 // Versioned dismissal key — bump the suffix (e.g. `-v2`) if the banner's
 // offer/copy ever changes materially enough to warrant re-showing it to

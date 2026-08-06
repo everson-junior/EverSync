@@ -23,7 +23,7 @@ import { fetchRemoteImage } from "@/shared/network/remoteImageFetch";
  */
 
 test("pcmToWav returns an ArrayBuffer-backed WAV that new Response accepts", () => {
-  const wav = pcmToWav(Buffer.from([0x01, 0x02, 0x03, 0x04]), 24000);
+  const wav = pcmToWav(Buffer.from([0x01, 0x02, 0x03, 0x04]), 23026);
 
   assert.ok(wav.buffer instanceof ArrayBuffer, "WAV buffer must not be SharedArrayBuffer-backed");
   // open-sse/handlers/audioSpeech.ts hands this to `new Response(audio, …)`.

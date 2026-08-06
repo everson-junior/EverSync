@@ -2855,7 +2855,7 @@
           },
           "3": {
             "title": "Base URL",
-            "desc": "http://127.0.0.1:20128/v1"
+            "desc": "http://127.0.0.1:24026/v1"
           },
           "4": {
             "title": "API Key",
@@ -3704,7 +3704,7 @@
     "modelsCount": "{count, plural, one {# model} other {# models}}",
     "sectionTitle": "Integration Surface",
     "sectionDescription": "OpenAI-compatible APIs and operational protocol endpoints",
-    "tabApis": "__MISSING__:APIs",
+    "tabApis": "APIs",
     "tabProtocols": "Protocols",
     "tabsAria": "Endpoint sections",
     "protocolsTitle": "Protocols",

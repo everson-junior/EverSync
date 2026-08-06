@@ -11,7 +11,8 @@ import { createRoot } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const STORAGE_KEY = "omniroute-kimi-sponsor-banner-dismissed-v1";
-const KIMI_CODING_AFF_URL = "https://www.kimi.com/code?aff=omniroute";
+const KIMI_CODING_AFF_URL =
+  "https://kimi-bot.com/activities/invite/share?scenario=invite&from=share_poster&invitation_code=FW9JFR";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (k: string) => k }));
 vi.mock("@/shared/components/ProviderIcon", () => ({ default: () => null }));
@@ -21,9 +22,8 @@ async function renderBanner(version: string): Promise<HTMLDivElement> {
   vi.doMock("@/shared/constants/appConfig", () => ({
     APP_CONFIG: { name: "OmniRoute", description: "AI Gateway", version },
   }));
-  const { default: KimiSponsorBanner } = await import(
-    "../../../src/app/(dashboard)/dashboard/KimiSponsorBanner"
-  );
+  const { default: KimiSponsorBanner } =
+    await import("../../../src/app/(dashboard)/dashboard/KimiSponsorBanner");
 
   const container = document.createElement("div");
   document.body.appendChild(container);
