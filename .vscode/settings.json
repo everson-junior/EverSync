@@ -138,5 +138,23 @@
     "**/*-worktree-*": true,
     "**/*-issues-*": true,
     "**/*-reorg*": true
+  },
+  "chat.agentSkillsLocations": {
+    ".agents/skills": false,
+    ".claude/skills": false,
+    "~/.copilot/skills": false,
+    "~/.agents/skills": false,
+    ".github/skills": false,
+    "~/.claude/skills": false,
+    ".context/skills": true
+  },
+  "chat.agentFilesLocations": {
+    ".github/agents": false,
+    ".claude/agents": false,
+    ".context/agents": true
+  },
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": false,
+    ".context/docs": true
   }
 }
