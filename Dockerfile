@@ -124,10 +124,10 @@ RUN --mount=type=cache,id=next-cache,target=/app/.build/next/cache \
 # ── Runner base ────────────────────────────────────────────────────────────
 FROM base AS runner-base
 
-LABEL org.opencontainers.image.title="omniroute" \
-  org.opencontainers.image.description="Unified AI proxy — route any LLM through one endpoint" \
-  org.opencontainers.image.url="https://omniroute.online" \
-  org.opencontainers.image.source="https://github.com/diegosouzapw/OmniRoute" \
+LABEL org.opencontainers.image.title="eversync" \
+  org.opencontainers.image.description="EverSync unified AI proxy and router" \
+  org.opencontainers.image.url="https://github.com/diegosouzapw/EverSync" \
+  org.opencontainers.image.source="https://github.com/diegosouzapw/EverSync" \
   org.opencontainers.image.licenses="MIT"
 
 ENV NODE_ENV=production
@@ -190,14 +190,14 @@ CMD ["node", "dev/run-standalone.mjs"]
 # ── Runner Web (web-cookie providers: Gemini Web, Claude Turnstile) ───────────
 #
 #  Two image flavors:
-#    runner-base  →  omniroute:VERSION        Lean base (~500 MB). No browsers.
-#    runner-web   →  omniroute:VERSION-web    +Chromium/Playwright (~800 MB).
+#    runner-base  →  eversync:VERSION        Lean base (~500 MB). No browsers.
+#    runner-web   →  eversync:VERSION-web    +Chromium/Playwright (~800 MB).
 #
 #  Use runner-web when you need web-cookie providers (gemini-web, claude-web,
 #  claude-turnstile). For all other providers runner-base is sufficient.
 #
 #  Build:
-#    docker build --target runner-web -t omniroute:web .
+#    docker build --target runner-web -t eversync:web .
 #  Compose:
 #    build:
 #      context: .
