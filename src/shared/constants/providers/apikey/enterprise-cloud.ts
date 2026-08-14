@@ -3,6 +3,19 @@
  * Pure data; merged by apikey/index.ts via spread (god-file decomposition; semantic split).
  */
 export const APIKEY_PROVIDERS_ENTERPRISE = {
+  lynn: {
+    id: "lynn",
+    alias: "lynn",
+    name: "LYNN",
+    icon: "auto_awesome",
+    color: "#003B49",
+    textIcon: "LY",
+    website: "https://www.totvs.com/blog/inovacoes/o-que-e-lynn/",
+    authHint: "Use your LYNN API key. OmniRoute sends it in the x-api-key header.",
+    apiHint:
+      "LYNN uses the OpenAI-compatible API at https://proxy.dta.totvs.ai/v1. Available models are discovered from /v1/models after you save a key.",
+    passthroughModels: true,
+  },
   "azure-openai": {
     id: "azure-openai",
     alias: "azure",

@@ -221,6 +221,7 @@ import { digitaloceanProvider } from "./registry/digitalocean/index.ts";
 import { hcnsecProvider } from "./registry/hcnsec/index.ts";
 import { promptqlProvider } from "./registry/promptql/index.ts";
 import { hyperagentProvider } from "./registry/hyperagent/index.ts";
+import { lynnProvider } from "./registry/lynn/index.ts";
 
 export const REGISTRY: Record<string, RegistryEntry> = {
   aimlapi: aimlapiProvider,
@@ -440,6 +441,7 @@ export const REGISTRY: Record<string, RegistryEntry> = {
   requesty: requestyProvider,
   sealion: sealionProvider,
   routeway: routewayProvider,
+  lynn: lynnProvider,
   digitalocean: digitaloceanProvider,
   hcnsec: hcnsecProvider,
   promptql: promptqlProvider,

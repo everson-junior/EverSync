@@ -23,3 +23,16 @@ test("getActiveSidebarHref prefers the most specific sidebar entry", () => {
   assert.equal(getActiveSidebarHref("/dashboard/cache/entries", items), "/dashboard/cache");
   assert.equal(getActiveSidebarHref("/dashboard/limits", items), "/dashboard/limits");
 });
+
+test("getActiveSidebarHref selects the matching query route over its base route", () => {
+  const items = [
+    { href: "/dashboard/providers" },
+    { href: "/dashboard/providers?category=corporate" },
+  ];
+
+  assert.equal(
+    getActiveSidebarHref("/dashboard/providers", items, "category=corporate"),
+    "/dashboard/providers?category=corporate"
+  );
+  assert.equal(getActiveSidebarHref("/dashboard/providers", items), "/dashboard/providers");
+});

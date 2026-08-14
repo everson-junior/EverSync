@@ -5,6 +5,8 @@ const providerPageUtils =
   await import("../../src/app/(dashboard)/dashboard/providers/providerPageUtils.ts");
 const providerPageStorage =
   await import("../../src/app/(dashboard)/dashboard/providers/providerPageStorage.ts");
+const providerCompactMode =
+  await import("../../src/app/(dashboard)/dashboard/providers/providerCompactMode.ts");
 const providers = await import("../../src/shared/constants/providers.ts");
 const providerCatalog = await import("../../src/lib/providers/catalog.ts");
 
@@ -180,6 +182,52 @@ test("compact provider entries prefer non-no-auth duplicates over deferred no-au
   assert.equal(visible.length, 1);
   assert.equal(visible[0].providerId, "opencode");
   assert.equal(visible[0].displayAuthType, "apikey");
+});
+
+test("compact mode limits the corporate category to enterprise providers", () => {
+  const corporateProvider = {
+    providerId: "azure-openai",
+    provider: { id: "azure-openai", name: "Azure OpenAI" },
+    stats: { total: 1 },
+    displayAuthType: "apikey",
+    toggleAuthType: "apikey",
+  };
+  const regularProvider = {
+    providerId: "openai",
+    provider: { id: "openai", name: "OpenAI" },
+    stats: { total: 1 },
+    displayAuthType: "apikey",
+    toggleAuthType: "apikey",
+  };
+  const empty = [];
+
+  const entries = providerCompactMode.buildCompactProviderEntriesForPage({
+    activeCategory: "corporate",
+    showFreeOnly: false,
+    freeSectionEntries: empty,
+    compatibleProviderEntries: empty,
+    oauthProviderEntries: empty,
+    ideProviderEntries: empty,
+    noAuthEntries: empty,
+    upstreamProxyEntries: empty,
+    llmProviderEntries: [regularProvider],
+    aggregatorProviderEntries: empty,
+    enterpriseProviderEntries: [corporateProvider],
+    embeddingRerankProviderEntries: empty,
+    imageProviderEntries: empty,
+    videoProviderEntries: empty,
+    webCookieProviderEntries: empty,
+    searchProviderEntries: empty,
+    webFetchEntries: empty,
+    audioProviderEntries: empty,
+    localProviderEntries: empty,
+    cloudAgentProviderEntries: empty,
+  });
+
+  assert.deepEqual(
+    entries.map((entry) => entry.providerId),
+    ["azure-openai"]
+  );
 });
 
 test("search filter matches provider name and id case-insensitively", () => {
@@ -396,6 +444,7 @@ test("static catalog entries resolve local, search, audio, web-cookie and upstre
   const gitlabDuoProvider = providerPageUtils.resolveDashboardProviderInfo("gitlab-duo");
   const chutesProvider = providerPageUtils.resolveDashboardProviderInfo("chutes");
   const datarobotProvider = providerPageUtils.resolveDashboardProviderInfo("datarobot");
+  const lynnProvider = providerPageUtils.resolveDashboardProviderInfo("lynn");
   const clarifaiProvider = providerPageUtils.resolveDashboardProviderInfo("clarifai");
   const empowerProvider = providerPageUtils.resolveDashboardProviderInfo("empower");
   const nousProvider = providerPageUtils.resolveDashboardProviderInfo("nous-research");
@@ -445,6 +494,8 @@ test("static catalog entries resolve local, search, audio, web-cookie and upstre
   assert.equal(chutesProvider?.name, providers.APIKEY_PROVIDERS.chutes.name);
   assert.equal(datarobotProvider?.category, "apikey");
   assert.equal(datarobotProvider?.name, providers.APIKEY_PROVIDERS.datarobot.name);
+  assert.equal(lynnProvider?.category, "apikey");
+  assert.equal(lynnProvider?.name, providers.APIKEY_PROVIDERS.lynn.name);
   assert.equal(clarifaiProvider?.category, "apikey");
   assert.equal(clarifaiProvider?.name, providers.APIKEY_PROVIDERS.clarifai.name);
   assert.equal(empowerProvider?.category, "apikey");

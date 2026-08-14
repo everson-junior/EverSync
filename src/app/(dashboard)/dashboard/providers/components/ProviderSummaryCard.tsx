@@ -16,6 +16,7 @@ type SummaryStat = {
 
 export interface ProviderSummaryStats {
   all: SummaryStat;
+  corporate: SummaryStat;
   free: SummaryStat;
   noauth: SummaryStat;
   oauth: SummaryStat;
@@ -108,6 +109,12 @@ export default function ProviderSummaryCard({
   testingMode,
 }: ProviderSummaryCardProps) {
   const categories = [
+    {
+      key: "corporate",
+      color: "bg-amber-500",
+      label: "Corporativo",
+      stat: summaryStats.corporate,
+    },
     { key: null, color: null, label: t("providerSummaryAll"), stat: summaryStats.all },
     { key: "oauth", color: "bg-blue-500", label: t("oauthLabel"), stat: summaryStats.oauth },
     { key: "ide", color: "bg-cyan-500", label: "IDE", stat: summaryStats.ide },

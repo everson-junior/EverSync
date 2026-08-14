@@ -71,6 +71,7 @@ function getCompactProviderEntryGroups<TProvider>({
   if (activeCategory === "ide") return [ideProviderEntries];
   if (activeCategory === "no-auth") return [noAuthEntries];
   if (activeCategory === "upstream-proxy") return [upstreamProxyEntries];
+  if (activeCategory === "corporate") return [enterpriseProviderEntries];
   if (activeCategory === "apikey") return apiKeyEntries;
   if (activeCategory === "webcookie") return [webCookieProviderEntries];
   if (activeCategory === "search") return [searchProviderEntries];

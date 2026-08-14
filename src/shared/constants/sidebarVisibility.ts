@@ -185,6 +185,7 @@ export const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
   "endpoints",
   "api-manager",
   "providers",
+  "corporate-providers",
   "combos",
   "analytics",
   "costs",

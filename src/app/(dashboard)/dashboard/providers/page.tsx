@@ -202,7 +202,7 @@ export default function ProvidersPage() {
   const [modelSearchQuery, setModelSearchQuery] = useState("");
   const liveModelsByProviderId = useSyncedModelsByProvider();
   const [showFreeOnly, setShowFreeOnly] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string | null>("corporate");
   // #4240: media-category (serviceKind) filter — composes with activeCategory,
   // search and configured-only. null = no serviceKind filter.
   const [activeServiceKind, setActiveServiceKind] = useState<string | null>(null);
@@ -237,6 +237,14 @@ export default function ProvidersPage() {
     const searchFromUrl = searchParams.get("search");
     if (searchFromUrl) {
       setSearchQuery(searchFromUrl);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get("category");
+    if (categoryFromUrl === "corporate") {
+      setShowFreeOnly(false);
+      setActiveCategory("corporate");
     }
   }, [searchParams]);
 
@@ -787,6 +795,7 @@ export default function ProvidersPage() {
 
   const summaryStats = {
     all: countConfigured(dashboardProviderEntriesAll),
+    corporate: countConfigured(enterpriseProviderEntriesAll),
     free: countConfigured(freeSectionEntriesAll),
     noauth: countConfigured(noAuthEntriesAll),
     oauth: countConfigured(oauthOnlyEntriesAll),
@@ -1428,16 +1437,13 @@ export default function ProvidersPage() {
             </div>
           )}
 
-          {/* Enterprise & Cloud */}
-          {showSection("apikey") && enterpriseProviderEntries.length > 0 && (
+          {/* Corporate Providers */}
+          {showSection("corporate") && enterpriseProviderEntries.length > 0 && (
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-xl font-semibold flex items-center gap-2 flex-1 min-w-0">
-                  {t("enterpriseCloud")}{" "}
-                  <span
-                    className="size-2.5 rounded-full bg-amber-500"
-                    title={t("enterpriseCloud")}
-                  />
+                  Corporativo{" "}
+                  <span className="size-2.5 rounded-full bg-amber-500" title="Corporativo" />
                   <ProviderCountBadge {...countConfigured(enterpriseProviderEntriesAll)} />
                 </h2>
               </div>

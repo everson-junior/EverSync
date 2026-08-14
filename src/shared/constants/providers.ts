@@ -90,6 +90,7 @@ export const AGGREGATOR_PROVIDER_IDS = new Set([
 ]);
 
 export const ENTERPRISE_CLOUD_PROVIDER_IDS = new Set([
+  "lynn",
   "azure-openai",
   "azure-ai",
   "bedrock",

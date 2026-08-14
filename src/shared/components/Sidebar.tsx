@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, type CSSProperties } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/shared/utils/cn";
 import { getActiveSidebarHref } from "@/shared/utils/sidebarRouteMatch";
 import { filterSidebarSectionsByQuery } from "@/shared/utils/sidebarSearch";
@@ -92,6 +92,7 @@ export default function Sidebar({
     };
   };
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const t = useTranslations("sidebar");
   const tc = useTranslations("common");
   const sidebarRef = useRef<HTMLElement>(null);
@@ -283,7 +284,7 @@ export default function Sidebar({
     section.children.flatMap((child: any) => (child.type === "group" ? child.items : [child]))
   );
 
-  const activeHref = getActiveSidebarHref(pathname, allVisibleItems);
+  const activeHref = getActiveSidebarHref(pathname, allVisibleItems, searchParams.toString());
 
   const isSearching = searchQuery.trim().length > 0;
   const displaySections = isSearching
