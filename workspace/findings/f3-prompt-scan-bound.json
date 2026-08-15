@@ -1,0 +1,34 @@
+{
+  "id": "f3-prompt-scan-bound",
+  "title": "Prompt injection scan only inspects a 16 KiB prefix",
+  "status": "FALSE_POSITIVE",
+  "severity": "medium",
+  "code_paths": ["src/shared/utils/inputSanitizer.ts:59", "src/shared/utils/inputSanitizer.ts:207"],
+  "description": "The injection detector limits regex inspection to the first 16 KiB of joined prompt content. A directive after padding is not detected, but the limit may be an intentional availability tradeoff rather than a security defect.",
+  "attacker_position": "AUTHENTICATED_CLIENT",
+  "privileges_required": "LOW",
+  "repro_status": "not_attempted",
+  "reasoning": "The bounded scan is an explicit hot-path availability tradeoff with regression coverage. Prompt-injection pattern detection is heuristic rather than a complete security boundary, so positioning a directive after padding does not independently establish a directly triggerable security vulnerability.",
+  "triage_checklist": {
+    "ignore_hypothetical_misuse": {
+      "outcome": "FAIL",
+      "reason": "Relies on treating best-effort heuristic detection as a complete access-control boundary."
+    },
+    "require_strict_reproducibility": {
+      "outcome": "FAIL",
+      "reason": "No concrete privileged consequence beyond bypassing a heuristic classifier was established."
+    }
+  },
+  "history": [
+    {
+      "stage": "researcher",
+      "pass_number": 1,
+      "note": "Requires independent review of the stated security contract and exploit impact."
+    },
+    {
+      "stage": "reviewer",
+      "pass_number": 1,
+      "note": "Rejected: explicitly bounded heuristic scan does not by itself demonstrate a security-boundary bypass."
+    }
+  ]
+}

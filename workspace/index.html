@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Painel de riscos de seguranca do sistema EverSync." />
+    <title>EverSync | Mapa de Riscos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="noise" aria-hidden="true"></div>
+    <header class="topbar">
+      <a class="brand" href="#overview" aria-label="EverSync Risk Map">
+        <span class="brand-mark"><i></i><i></i><i></i></span>
+        <span>EVERSYNC</span>
+      </a>
+      <div class="review-status"><span></span> ANALISE CONCLUIDA <b>PASSO 01</b></div>
+    </header>
+
+    <main>
+      <section id="overview" class="intro section-wrap">
+        <p class="eyebrow">Security review / production environment</p>
+        <div class="intro-copy">
+          <h1>O que precisa de atencao,<br /><em>sem ruido.</em></h1>
+          <p>Este painel traduz a revisao de seguranca do EverSync em decisoes claras. Dos tres cenarios investigados, um risco permanece aberto.</p>
+        </div>
+        <div class="compass" aria-label="Nivel geral de risco: medio">
+          <div class="compass-ring"><span>6</span><small>/10</small></div>
+          <p>RISCO ATUAL<br /><b>MEDIO</b></p>
+        </div>
+      </section>
+
+      <section class="metrics section-wrap" aria-label="Resumo da analise">
+        <article><span class="metric-label">Cenarios revisados</span><strong>03</strong><small>hipoteses auditadas</small></article>
+        <article><span class="metric-label">Riscos validos</span><strong class="amber">01</strong><small>exige tratamento</small></article>
+        <article><span class="metric-label">Riscos descartados</span><strong>02</strong><small>sem evidencia suficiente</small></article>
+        <article><span class="metric-label">Ativos criticos</span><strong>03</strong><small>API, credenciais, autorizacao</small></article>
+      </section>
+
+      <section class="risk-map section-wrap">
+        <div class="section-heading">
+          <div><p class="eyebrow">Mapa de exposicao</p><h2>Onde o risco se concentra</h2></div>
+          <div class="legend"><span><i class="dot amber-dot"></i> Risco validado</span><span><i class="dot slate-dot"></i> Revisado e descartado</span></div>
+        </div>
+        <div class="map-layout">
+          <div class="risk-scale" aria-label="Grafico de criticidade">
+            <div class="scale-y"><span>10</span><span>8</span><span>6</span><span>4</span><span>2</span><span>0</span></div>
+            <div class="plot">
+              <div class="grid-line line-1"></div><div class="grid-line line-2"></div><div class="grid-line line-3"></div><div class="grid-line line-4"></div><div class="grid-line line-5"></div>
+              <button class="risk-node active" data-risk="f2" style="--x: 62%; --y: 39%;" aria-label="Abrir risco de redacao PII, nivel 6 de 10"><span>F2</span></button>
+              <button class="risk-node dismissed" data-risk="f1" style="--x: 28%; --y: 70%;" aria-label="Abrir cenario descartado F1"><span>F1</span></button>
+              <button class="risk-node dismissed" data-risk="f3" style="--x: 83%; --y: 70%;" aria-label="Abrir cenario descartado F3"><span>F3</span></button>
+              <div class="axis-title">PROBABILIDADE DE EXPLORACAO <span>BAIXA</span><span>ALTA</span></div>
+            </div>
+          </div>
+          <aside class="insight-card" id="risk-detail" aria-live="polite">
+            <div class="card-top"><span class="risk-tag medium">MEDIO</span><span class="risk-id">F2</span></div>
+            <h3>Protecao de dados pode falhar em rotas especificas.</h3>
+            <p>Com a redacao de PII ativada, algumas rotas enviam o conteudo original ao provedor de IA, mesmo quando dados sensiveis foram detectados.</p>
+            <button class="text-button" id="open-modal">Entender o impacto <span>→</span></button>
+          </aside>
+        </div>
+      </section>
+
+      <section class="journey section-wrap">
+        <div class="section-heading"><div><p class="eyebrow">Caminho do dado</p><h2>Como o dado sensivel escapa</h2></div><p class="section-note">A falha ocorre apenas quando a opcao de redacao esta habilitada.</p></div>
+        <ol class="flow">
+          <li><span class="flow-number">01</span><h3>Cliente envia</h3><p>Uma chamada contem, por exemplo, um endereco de e-mail.</p></li>
+          <li><span class="flow-number">02</span><h3>Sistema detecta</h3><p>O sanitizador identifica o dado e cria uma versao protegida.</p></li>
+          <li class="warning"><span class="flow-number">03</span><h3>Versao errada segue</h3><p>A camada intermediaria descarta a versao protegida.</p></li>
+          <li><span class="flow-number">04</span><h3>Provedor recebe</h3><p>O servico externo recebe o texto original com PII.</p></li>
+        </ol>
+      </section>
+
+      <section class="actions section-wrap">
+        <div><p class="eyebrow">Proxima decisao</p><h2>Corrigir antes de ampliar<br />o uso da redacao de PII.</h2></div>
+        <div class="action-list">
+          <article><span>01</span><div><h3>Prioridade media</h3><p>O risco depende de uma configuracao que hoje vem desativada por padrao.</p></div></article>
+          <article><span>02</span><div><h3>Correcao recomendada</h3><p>Encaminhar o payload ja redigido para as rotas que usam a camada de compatibilidade.</p></div></article>
+          <article><span>03</span><div><h3>Teste de seguranca</h3><p>Validar que um e-mail em uma requisicao de embeddings nao alcance o provedor externo.</p></div></article>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>EVERSYNC / SECURITY INTELLIGENCE</span><span>FONTE: REVISAO MANTIS, PASSO 01</span></footer>
+
+    <dialog id="risk-modal">
+      <button class="icon-button" id="close-modal" aria-label="Fechar detalhe">×</button>
+      <p class="eyebrow">F2 / RISCO VALIDADO</p>
+      <h2>Redacao de PII nao chega a todas as rotas.</h2>
+      <p>Quando a configuracao <code>PII_REDACTION_ENABLED</code> esta ativa, o sistema identifica e mascara dados pessoais em uma copia da requisicao. Uma camada de compatibilidade, porem, continua encaminhando a copia original em rotas como embeddings.</p>
+      <dl><div><dt>Impacto</dt><dd>Dados pessoais podem ser enviados a um provedor externo.</dd></div><div><dt>Condicao</dt><dd>Redacao de PII ativada pelo operador.</dd></div><div><dt>Confianca</dt><dd>Confirmado por analise estatica; falta teste de execucao.</dd></div></dl>
+    </dialog>
+    <script src="app.js"></script>
+  </body>
+</html>

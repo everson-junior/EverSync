@@ -1,0 +1,82 @@
+{
+  "id": "f2-pii-redaction-facade",
+  "title": "PII redaction result is not applied by injection-guard facade",
+  "status": "VALID",
+  "severity": "medium",
+  "code_paths": [
+    "src/middleware/promptInjectionGuard.ts:96",
+    "src/lib/guardrails/promptInjection.ts:205",
+    "src/shared/utils/inputSanitizer.ts:293"
+  ],
+  "description": "When request-side PII redaction is enabled, the sanitizer constructs a redacted body but the compatibility middleware passes the original parsed body downstream. Wrapper-only routes can therefore forward detected PII to an upstream provider.",
+  "attacker_position": "AUTHENTICATED_CLIENT",
+  "privileges_required": "LOW",
+  "repro_status": "statically_confirmed",
+  "production_viability": "CONDITIONAL_VIABLE",
+  "impact_score": 3,
+  "likelihood_score": 3,
+  "availability_tier": "STANDARD",
+  "inferred_exposure": "CLIENT_API",
+  "mantis_risk_score": 6,
+  "priority": "MEDIUM",
+  "sanity_triage_applied": "static_confirmation cap applied; operator opt-in required",
+  "calibration_checklist": {
+    "repro_failure": {
+      "outcome": "UNKNOWN",
+      "reason": "No runtime reproducer was run in this pipeline."
+    },
+    "static_confirmation": {
+      "outcome": "APPLIES",
+      "reason": "Static data-flow confirmation is present without empirical execution evidence; likelihood is capped conservatively."
+    },
+    "operator_opt_in": {
+      "outcome": "APPLIES",
+      "reason": "PII_REDACTION_ENABLED defaults to false and must be enabled by the operator."
+    }
+  },
+  "outrage_commentary": "An enabled privacy control should not silently detect sensitive content while forwarding the original payload on a subset of production endpoints.",
+  "executive_summary": "When request PII redaction is enabled, wrapper-only API routes can forward original PII because the injection-guard facade discards the sanitizer's redacted body.",
+  "critic_reasoning": "The affected routes are production API endpoints and the wrapper path is available in release builds. Exploitation requires an operator to opt in to PII_REDACTION_ENABLED, which is intentionally disabled by default. When enabled, the unmodified payload can still be forwarded on wrapper-only routes; therefore the issue is conditionally production-viable rather than dead, test-only, or assertion-dependent.",
+  "reasoning": "The sanitizer creates sanitizedBody when opt-in PII request redaction is enabled, but evaluatePromptInjection returns only detection metadata. withInjectionGuard forwards the original request and parsed body, and embeddings parses that original body before calling the provider service. The independently traced wrapper path does not run the registry's PIIMaskerGuardrail modifiedPayload flow.",
+  "triage_checklist": {
+    "ignore_hypothetical_misuse": {
+      "outcome": "PASS",
+      "reason": "The wrapper path directly supplies the original parsed request to the downstream handler."
+    },
+    "require_strict_reproducibility": {
+      "outcome": "PASS",
+      "reason": "The redacted body is constructed but omitted from the decision interface and cannot reach wrapper consumers."
+    },
+    "verify_attacker_control_of_source": {
+      "outcome": "PASS",
+      "reason": "A client controls request content containing its own or supplied PII."
+    },
+    "intrinsic_security_flaws": {
+      "outcome": "PASS",
+      "reason": "This violates the operator-enabled request PII redaction control on wrapper-only routes."
+    }
+  },
+  "repro_hints": "With request-side PII redaction explicitly enabled, trace an embeddings or speech request containing a detectable email through withInjectionGuard and verify the provider receives the original or redacted payload.",
+  "history": [
+    {
+      "stage": "researcher",
+      "pass_number": 1,
+      "note": "Targeted static analysis identified redacted payload construction without wrapper propagation."
+    },
+    {
+      "stage": "reviewer",
+      "pass_number": 1,
+      "note": "Validated by independently tracing sanitizeRequest, evaluatePromptInjection, withInjectionGuard, and the embeddings route."
+    },
+    {
+      "stage": "critic",
+      "pass_number": 1,
+      "note": "Conditional production viability: release API route, gated only by the operator opt-in PII redaction setting."
+    },
+    {
+      "stage": "calibrate",
+      "pass_number": 1,
+      "note": "Risk score 6 (MEDIUM): static confirmation, client API exposure, and explicit operator opt-in required."
+    }
+  ]
+}

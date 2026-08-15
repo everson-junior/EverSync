@@ -1,0 +1,50 @@
+{
+  "pass_number": 1,
+  "mode": "strategic",
+  "investigations": [
+    {
+      "id": "route-authorization-locality",
+      "title": "Route locality and management-bypass audit",
+      "target_files": [
+        "src/server/authz/routeGuard.ts",
+        "src/shared/constants/spawnCapablePrefixes.ts",
+        "src/lib/config/runtimeSettings.ts"
+      ],
+      "kb_references": [
+        "workspace/kb/entities/route_authorization.md",
+        "workspace/kb/vulnerabilities/Authorization-Bypass.md"
+      ],
+      "question": "Verify that remotely controllable request data cannot classify a process-capable route as local, and that management-scope bypass prefixes cannot encompass spawn-capable paths."
+    },
+    {
+      "id": "chat-request-boundary",
+      "title": "Chat request and provider execution boundary audit",
+      "target_files": [
+        "open-sse/handlers/chatCore.ts",
+        "open-sse/handlers/chatCore/sanitization.ts",
+        "open-sse/utils/error.ts",
+        "open-sse/executors/base.ts"
+      ],
+      "kb_references": [
+        "workspace/kb/entities/request_pipeline.md",
+        "workspace/kb/vulnerabilities/Input-Validation.md",
+        "workspace/kb/vulnerabilities/SSRF-Process-Exposure.md"
+      ],
+      "question": "Trace attacker-controlled request, header, provider, and upstream-response values for unsafe URL construction, credential disclosure, unsafe transformation, or raw error propagation."
+    },
+    {
+      "id": "prompt-guard-boundary",
+      "title": "Prompt guard parsing and fail-closed behavior audit",
+      "target_files": [
+        "src/middleware/promptInjectionGuard.ts",
+        "src/lib/guardrails/promptInjection.ts",
+        "src/lib/guardrails/registry.ts"
+      ],
+      "kb_references": [
+        "workspace/kb/entities/prompt_injection_guard.md",
+        "workspace/kb/vulnerabilities/Input-Validation.md"
+      ],
+      "question": "Verify parsing, error handling, disabled-guardrail handling, and downstream body reuse do not create a bypass of security enforcement."
+    }
+  ]
+}

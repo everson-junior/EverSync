@@ -1,0 +1,15 @@
+{
+  "src/server/authz/routeGuard.ts": [
+    "src/shared/constants/spawnCapablePrefixes.ts",
+    "src/lib/config/runtimeSettings.ts"
+  ],
+  "src/middleware/promptInjectionGuard.ts": [
+    "src/lib/guardrails/promptInjection.ts",
+    "src/lib/guardrails/registry.ts"
+  ],
+  "open-sse/handlers/chatCore.ts": [
+    "open-sse/handlers/chatCore/sanitization.ts",
+    "open-sse/utils/error.ts",
+    "open-sse/executors/index.ts"
+  ]
+}
