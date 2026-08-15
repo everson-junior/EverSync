@@ -69,6 +69,44 @@ test("movePath falls back to copy/remove when rename raises EXDEV", async () => 
   });
 });
 
+test("movePath falls back to copy/remove when Windows rename raises EPERM", async () => {
+  await withTempDir(async (tempDir) => {
+    const sourceDir = path.join(tempDir, "app");
+    const destinationDir = path.join(tempDir, ".app-build-backup");
+    const nestedFile = path.join(sourceDir, "nested", "file.txt");
+
+    await fs.mkdir(path.dirname(nestedFile), { recursive: true });
+    await fs.writeFile(nestedFile, "legacy payload");
+
+    let copyCalled = false;
+    let removeCalled = false;
+
+    await movePath(sourceDir, destinationDir, {
+      rename: async () => {
+        const error = new Error("operation not permitted");
+        error.code = "EPERM";
+        throw error;
+      },
+      cp: async (...args) => {
+        copyCalled = true;
+        return fs.cp(...args);
+      },
+      rm: async (...args) => {
+        removeCalled = true;
+        return fs.rm(...args);
+      },
+    });
+
+    assert.equal(copyCalled, true);
+    assert.equal(removeCalled, true);
+    assert.equal(fsSync.existsSync(sourceDir), false);
+    assert.equal(
+      await fs.readFile(path.join(destinationDir, "nested", "file.txt"), "utf8"),
+      "legacy payload"
+    );
+  });
+});
+
 test("movePath rethrows non-EXDEV rename failures", async () => {
   await withTempDir(async (tempDir) => {
     const sourceDir = path.join(tempDir, "app");

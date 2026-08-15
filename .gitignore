@@ -89,6 +89,7 @@ data/
 .data/
 logs/*
 test_output.log
+**/mantis-summary.md
 
 # analysis directories (generated, not tracked)
 .analysis/

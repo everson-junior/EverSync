@@ -63,12 +63,14 @@ export async function movePath(sourcePath, destinationPath, fsImpl = fs) {
   try {
     await fsImpl.rename(sourcePath, destinationPath);
   } catch (error) {
-    if (error?.code !== "EXDEV") {
+    const shouldCopyAndRemove =
+      error?.code === "EXDEV" || (process.platform === "win32" && error?.code === "EPERM");
+    if (!shouldCopyAndRemove) {
       throw error;
     }
 
     console.warn(
-      `[build-next-isolated] EXDEV while moving ${sourcePath} -> ${destinationPath}; falling back to copy/remove`
+      `[build-next-isolated] ${error.code} while moving ${sourcePath} -> ${destinationPath}; falling back to copy/remove`
     );
     await fsImpl.cp(sourcePath, destinationPath, {
       recursive: true,

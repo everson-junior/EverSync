@@ -142,11 +142,11 @@
   "chat.agentSkillsLocations": {
     ".agents/skills": false,
     ".claude/skills": false,
-    "~/.copilot/skills": false,
     "~/.agents/skills": false,
+    ".context/skills": true,
+    "~/.copilot/skills": false,
     ".github/skills": false,
-    "~/.claude/skills": false,
-    ".context/skills": true
+    "~/.claude/skills": false
   },
   "chat.agentFilesLocations": {
     ".github/agents": false,

@@ -1,7 +1,7 @@
 {
   "name": "eversync",
-  "version": "3.8.50",
-  "description": "EverSync V1.0.0 (Base V3.8.50) — Unified AI router with providers, auto fallback, and OpenAI-compatible APIs.",
+  "version": "1.0.0",
+  "description": "EverSync v1.0.0 — Unified AI router with providers, auto fallback, and OpenAI-compatible APIs.",
   "type": "module",
   "bin": {
     "eversync": "bin/omniroute.mjs",

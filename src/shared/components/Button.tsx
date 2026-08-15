@@ -6,8 +6,9 @@ const variants = {
   primary: "bg-[image:var(--grad-brand)] text-white shadow-sm hover:brightness-105",
   accent: "bg-accent text-white shadow-sm hover:bg-accent-hover",
   secondary:
-    "bg-white dark:bg-white/10 border border-black/10 dark:border-white/10 text-text-main hover:bg-black/5 dark:hover:bg-white/5",
-  outline: "border border-black/15 dark:border-white/15 text-text-main hover:bg-black/5",
+    "bg-white dark:bg-white/10 cloud:bg-white/10 border border-black/10 dark:border-white/10 cloud:border-white/10 text-text-main hover:bg-black/5 dark:hover:bg-white/5",
+  outline:
+    "border border-black/15 dark:border-white/15 cloud:border-white/15 text-text-main hover:bg-black/5 dark:hover:bg-white/5",
   ghost: "text-text-muted hover:bg-black/5 dark:hover:bg-white/5 hover:text-text-main",
   warning: "bg-amber-500 text-white hover:bg-amber-600 shadow-sm",
   danger: "bg-red-500 text-white hover:bg-red-600 shadow-sm",

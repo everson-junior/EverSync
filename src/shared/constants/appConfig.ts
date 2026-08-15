@@ -8,5 +8,5 @@ export const APP_CONFIG = {
 
 export const THEME_CONFIG = {
   storageKey: "theme",
-  defaultTheme: "system",
+  defaultTheme: "cloud",
 };
