@@ -41,14 +41,6 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
     icon: "dns",
   },
   {
-    id: "corporate-providers",
-    href: "/dashboard/providers?category=corporate",
-    i18nKey: "corporateProviders",
-    labelFallback: "Provedores Corporativo",
-    subtitleFallback: "Provedores empresariais e de nuvem",
-    icon: "business",
-  },
-  {
     id: "embedded-services",
     href: "/dashboard/providers/services",
     i18nKey: "embeddedServices",

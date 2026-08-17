@@ -1,10 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  CURATED_PROVIDER_CATALOG_STORAGE_KEY,
   parseConfiguredOnlyPreference,
+  parseShowAllProvidersPreference,
   parseProviderDisplayModePreference,
   readConfiguredOnlyPreference,
+  readShowAllProvidersPreference,
   writeConfiguredOnlyPreference,
+  writeShowAllProvidersPreference,
   readProviderDisplayModePreference,
   shouldSyncProviderDisplayMode,
   writeProviderDisplayModePreference,
@@ -57,6 +61,35 @@ test("parseConfiguredOnlyPreference returns false for undefined", () => {
 
 test("parseConfiguredOnlyPreference returns false for empty string", () => {
   assert.equal(parseConfiguredOnlyPreference(""), false);
+});
+
+// ---------------------------------------------------------------------------
+// Curated provider catalog preference
+// ---------------------------------------------------------------------------
+
+test("parseShowAllProvidersPreference accepts only the explicit true value", () => {
+  assert.equal(parseShowAllProvidersPreference("true"), true);
+  assert.equal(parseShowAllProvidersPreference("false"), false);
+  assert.equal(parseShowAllProvidersPreference(null), false);
+  assert.equal(parseShowAllProvidersPreference("unexpected"), false);
+});
+
+test("readShowAllProvidersPreference defaults to the curated catalog", () => {
+  const storage = makeMockStorage();
+  assert.equal(readShowAllProvidersPreference(storage), false);
+  assert.equal(readShowAllProvidersPreference(null), false);
+});
+
+test("show-all provider preference persists only when enabled", () => {
+  const storage = makeMockStorage();
+
+  writeShowAllProvidersPreference(true, storage);
+  assert.equal(storage.getItem(CURATED_PROVIDER_CATALOG_STORAGE_KEY), "true");
+  assert.equal(readShowAllProvidersPreference(storage), true);
+
+  writeShowAllProvidersPreference(false, storage);
+  assert.equal(storage.getItem(CURATED_PROVIDER_CATALOG_STORAGE_KEY), null);
+  assert.equal(readShowAllProvidersPreference(storage), false);
 });
 
 // ---------------------------------------------------------------------------

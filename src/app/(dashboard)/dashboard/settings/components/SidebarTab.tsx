@@ -406,6 +406,7 @@ export default function SidebarTab() {
   const [activePreset, setActivePreset] = useState<SidebarPresetId | null>(null);
   const [confirmPreset, setConfirmPreset] = useState<SidebarPresetId | null>(null);
   const [showDebug, setShowDebug] = useState(false);
+  const [providerFilterChangeEnabled, setProviderFilterChangeEnabled] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings")
@@ -427,6 +428,7 @@ export default function SidebarTab() {
         );
         setActivePreset(data?.[SIDEBAR_PRESET_KEY] ?? null);
         setShowDebug(data?.debugMode === true);
+        setProviderFilterChangeEnabled(data?.providerFilterChangeEnabled === true);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -525,6 +527,11 @@ export default function SidebarTab() {
 
   const resetToDefault = () => applyPreset("all");
 
+  const toggleProviderFilterChange = (enabled: boolean) => {
+    setProviderFilterChangeEnabled(enabled);
+    patch({ providerFilterChangeEnabled: enabled });
+  };
+
   const presetLabels: Record<SidebarPresetId, string> = {
     all: getSettingsLabel("presetAll", "All"),
     minimal: getSettingsLabel("presetMinimal", "Minimal"),
@@ -561,6 +568,21 @@ export default function SidebarTab() {
       </div>
 
       <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface/40 px-4 py-3">
+          <div>
+            <p className="font-medium">
+              {getSettingsLabel("providerFilterChange", "Alterar filtro de provedores")}
+            </p>
+            <p className="text-sm text-text-muted">
+              {getSettingsLabel(
+                "providerFilterChangeDesc",
+                "When disabled, Providers opens with the Corporate filter locked."
+              )}
+            </p>
+          </div>
+          <Toggle checked={providerFilterChangeEnabled} onChange={toggleProviderFilterChange} />
+        </div>
+
         {/* Presets */}
         <div>
           <div className="mb-3">

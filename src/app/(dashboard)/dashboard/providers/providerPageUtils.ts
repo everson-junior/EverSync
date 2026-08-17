@@ -289,6 +289,17 @@ export function buildCompatibleProviderGroups(
   return { openai, anthropic, claudeCode };
 }
 
+export function filterProviderEntriesForCatalogVisibility<TProvider>(
+  entries: ProviderEntry<TProvider>[],
+  showAllProviders: boolean
+): ProviderEntry<TProvider>[] {
+  if (showAllProviders) return entries;
+
+  return entries.filter(
+    (entry) => entry.providerId === "lynn" || entry.displayAuthType === "compatible"
+  );
+}
+
 export type LiveModelsByProviderId = Record<string, Array<{ id: string; name?: string }>>;
 
 /**
@@ -445,6 +456,15 @@ export interface ProviderPageData {
   expirations: any | null;
   blockedProviders: string[] | null;
   settings: any | null;
+}
+
+export function isProviderFilterChangeEnabled(settings: unknown): boolean {
+  return (
+    typeof settings === "object" &&
+    settings !== null &&
+    "providerFilterChangeEnabled" in settings &&
+    (settings as { providerFilterChangeEnabled?: unknown }).providerFilterChangeEnabled === true
+  );
 }
 
 // Bound each first-paint request so a single stalled connection cannot freeze

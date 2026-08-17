@@ -116,6 +116,75 @@ test("configured-only filter keeps no-auth providers even without a saved connec
   );
 });
 
+test("curated provider catalog keeps LYNN and user-created compatible providers only", () => {
+  const entries = [
+    {
+      providerId: "lynn",
+      provider: { id: "lynn", name: "LYNN" },
+      stats: { total: 0 },
+      displayAuthType: "apikey" as const,
+      toggleAuthType: "apikey" as const,
+    },
+    {
+      providerId: "openai-compatible-responses-custom",
+      provider: { id: "openai-compatible-responses-custom", name: "Custom OpenAI" },
+      stats: { total: 0 },
+      displayAuthType: "compatible" as const,
+      toggleAuthType: "apikey" as const,
+    },
+    {
+      providerId: "anthropic-compatible-custom",
+      provider: { id: "anthropic-compatible-custom", name: "Custom Anthropic" },
+      stats: { total: 0 },
+      displayAuthType: "compatible" as const,
+      toggleAuthType: "apikey" as const,
+    },
+    {
+      providerId: "anthropic-compatible-cc-custom",
+      provider: { id: "anthropic-compatible-cc-custom", name: "Custom Claude Code" },
+      stats: { total: 0 },
+      displayAuthType: "compatible" as const,
+      toggleAuthType: "apikey" as const,
+    },
+    {
+      providerId: "azure",
+      provider: { id: "azure", name: "Azure" },
+      stats: { total: 0 },
+      displayAuthType: "apikey" as const,
+      toggleAuthType: "apikey" as const,
+    },
+  ];
+
+  assert.deepEqual(
+    providerPageUtils
+      .filterProviderEntriesForCatalogVisibility(entries, false)
+      .map((entry) => entry.providerId),
+    [
+      "lynn",
+      "openai-compatible-responses-custom",
+      "anthropic-compatible-custom",
+      "anthropic-compatible-cc-custom",
+    ]
+  );
+  assert.equal(
+    providerPageUtils.filterProviderEntriesForCatalogVisibility(entries, true).length,
+    5
+  );
+});
+
+test("provider filter changes require the sidebar setting to be enabled", () => {
+  assert.equal(providerPageUtils.isProviderFilterChangeEnabled(null), false);
+  assert.equal(providerPageUtils.isProviderFilterChangeEnabled({}), false);
+  assert.equal(
+    providerPageUtils.isProviderFilterChangeEnabled({ providerFilterChangeEnabled: false }),
+    false
+  );
+  assert.equal(
+    providerPageUtils.isProviderFilterChangeEnabled({ providerFilterChangeEnabled: true }),
+    true
+  );
+});
+
 test("compact provider entries dedupe providers and move no-auth entries to the end", () => {
   const openRouterFromFree = {
     providerId: "openrouter",

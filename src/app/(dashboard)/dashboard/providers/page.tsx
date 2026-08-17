@@ -26,7 +26,9 @@ import {
   buildStaticProviderEntries,
   buildCompatibleProviderGroups,
   connectionMatchesProviderCard,
+  filterProviderEntriesForCatalogVisibility,
   filterConfiguredProviderEntries,
+  isProviderFilterChangeEnabled,
   shouldFilterProviderEntriesForDisplayMode,
   shouldShowFirstProviderHint,
   shouldShowProviderSection,
@@ -185,6 +187,7 @@ export default function ProvidersPage() {
     useState<CodexGlobalServiceMode>("none");
   const [loading, setLoading] = useState(true);
   const [showAllProviders, setShowAllProviders] = useState(false);
+  const [providerFilterChangeEnabled, setProviderFilterChangeEnabled] = useState(false);
   const [showAddCompatibleModal, setShowAddCompatibleModal] = useState(false);
   const [showAddAnthropicCompatibleModal, setShowAddAnthropicCompatibleModal] = useState(false);
   const [showAddCcCompatibleModal, setShowAddCcCompatibleModal] = useState(false);
@@ -265,6 +268,13 @@ export default function ProvidersPage() {
         if (data.expirations) setExpirations(data.expirations);
         if (data.blockedProviders) setBlockedProviders(data.blockedProviders);
         setCodexGlobalServiceMode(getCodexGlobalServiceMode(data.settings));
+        const canChangeFilter = isProviderFilterChangeEnabled(data.settings);
+        setProviderFilterChangeEnabled(canChangeFilter);
+        setShowAllProviders(canChangeFilter);
+        if (canChangeFilter) {
+          setShowFreeOnly(false);
+          setActiveCategory(null);
+        }
       } catch (error) {
         console.log("Error fetching data:", error);
       } finally {
@@ -500,7 +510,34 @@ export default function ProvidersPage() {
   );
   const isCompactProviderDisplay = effectiveProviderDisplayMode === "compact";
 
-  const oauthProviderEntriesAll = buildStaticProviderEntries("oauth", getProviderStats);
+  const compatibleProviderEntriesAll = [
+    ...compatibleProviders.map((provider) => ({
+      providerId: provider.id,
+      provider,
+      stats: getProviderStats(provider.id, "apikey"),
+      displayAuthType: "compatible" as const,
+      toggleAuthType: "apikey" as const,
+    })),
+    ...anthropicCompatibleProviders.map((provider) => ({
+      providerId: provider.id,
+      provider,
+      stats: getProviderStats(provider.id, "apikey"),
+      displayAuthType: "compatible" as const,
+      toggleAuthType: "apikey" as const,
+    })),
+    ...ccCompatibleProviders.map((provider) => ({
+      providerId: provider.id,
+      provider,
+      stats: getProviderStats(provider.id, "apikey"),
+      displayAuthType: "compatible" as const,
+      toggleAuthType: "apikey" as const,
+    })),
+  ];
+
+  const oauthProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("oauth", getProviderStats),
+    showAllProviders
+  );
   const oauthProviderEntries = filterConfiguredProviderEntries(
     oauthProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -511,7 +548,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const rawNoAuthEntriesAll = buildStaticProviderEntries("no-auth", getProviderStats);
+  const rawNoAuthEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("no-auth", getProviderStats),
+    showAllProviders
+  );
   // Partition rather than drop: blocked no-auth providers stay surfaced on the page
   // (rendered with a "Disabled" badge + Enable button) instead of silently vanishing,
   // which left users unable to find/restore a disabled no-auth provider (#5166/#5183).
@@ -529,7 +569,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const apiKeyProviderEntriesAll = buildStaticProviderEntries("apikey", getProviderStats);
+  const apiKeyProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("apikey", getProviderStats),
+    showAllProviders
+  );
   const llmProviderEntriesAll = apiKeyProviderEntriesAll.filter(
     (entry) =>
       !IMAGE_ONLY_PROVIDER_IDS.has(entry.providerId) &&
@@ -571,9 +614,10 @@ export default function ProvidersPage() {
     activeServiceKind,
     liveModelsByProviderId
   );
-  const enterpriseProviderEntriesAll = apiKeyProviderEntriesAll.filter((entry) =>
-    ENTERPRISE_CLOUD_PROVIDER_IDS.has(entry.providerId)
-  );
+  const enterpriseProviderEntriesAll = dedupeProviderEntries([
+    ...apiKeyProviderEntriesAll.filter((entry) => entry.providerId === "lynn"),
+    ...compatibleProviderEntriesAll,
+  ]);
   const enterpriseProviderEntries = filterConfiguredProviderEntries(
     enterpriseProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -608,7 +652,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const webCookieProviderEntriesAll = buildStaticProviderEntries("web-cookie", getProviderStats);
+  const webCookieProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("web-cookie", getProviderStats),
+    showAllProviders
+  );
   const webCookieProviderEntries = filterConfiguredProviderEntries(
     webCookieProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -619,7 +666,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const localProviderEntriesAll = buildStaticProviderEntries("local", getProviderStats);
+  const localProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("local", getProviderStats),
+    showAllProviders
+  );
   const localProviderEntries = filterConfiguredProviderEntries(
     localProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -630,7 +680,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const searchProviderEntriesAll = buildStaticProviderEntries("search", getProviderStats);
+  const searchProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("search", getProviderStats),
+    showAllProviders
+  );
   const searchProviderEntries = filterConfiguredProviderEntries(
     searchProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -641,7 +694,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const audioProviderEntriesAll = buildStaticProviderEntries("audio", getProviderStats);
+  const audioProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("audio", getProviderStats),
+    showAllProviders
+  );
   const audioProviderEntries = filterConfiguredProviderEntries(
     audioProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -652,7 +708,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const cloudAgentProviderEntriesAll = buildStaticProviderEntries("cloud-agent", getProviderStats);
+  const cloudAgentProviderEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("cloud-agent", getProviderStats),
+    showAllProviders
+  );
   const cloudAgentProviderEntries = filterConfiguredProviderEntries(
     cloudAgentProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -663,7 +722,10 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const upstreamProxyEntriesAll = buildStaticProviderEntries("upstream-proxy", getProviderStats);
+  const upstreamProxyEntriesAll = filterProviderEntriesForCatalogVisibility(
+    buildStaticProviderEntries("upstream-proxy", getProviderStats),
+    showAllProviders
+  );
   const upstreamProxyEntries = filterConfiguredProviderEntries(
     upstreamProxyEntriesAll,
     effectiveShowConfiguredOnly,
@@ -674,29 +736,6 @@ export default function ProvidersPage() {
     liveModelsByProviderId
   );
 
-  const compatibleProviderEntriesAll = [
-    ...compatibleProviders.map((provider) => ({
-      providerId: provider.id,
-      provider,
-      stats: getProviderStats(provider.id, "apikey"),
-      displayAuthType: "compatible" as const,
-      toggleAuthType: "apikey" as const,
-    })),
-    ...anthropicCompatibleProviders.map((provider) => ({
-      providerId: provider.id,
-      provider,
-      stats: getProviderStats(provider.id, "apikey"),
-      displayAuthType: "compatible" as const,
-      toggleAuthType: "apikey" as const,
-    })),
-    ...ccCompatibleProviders.map((provider) => ({
-      providerId: provider.id,
-      provider,
-      stats: getProviderStats(provider.id, "apikey"),
-      displayAuthType: "compatible" as const,
-      toggleAuthType: "apikey" as const,
-    })),
-  ];
   const compatibleProviderEntries = filterConfiguredProviderEntries(
     compatibleProviderEntriesAll,
     effectiveShowConfiguredOnly,
@@ -861,19 +900,23 @@ export default function ProvidersPage() {
         onServiceKindChange={setActiveServiceKind}
         disabledConfigured={connections.length === 0}
         displayMode={effectiveProviderDisplayMode}
+        filterControlsEnabled={providerFilterChangeEnabled}
         modelSearchQuery={modelSearchQuery}
         onBatchTest={handleBatchTest}
         onCategoryChange={(category, freeOnly) => {
+          if (!providerFilterChangeEnabled) return;
           setShowFreeOnly(freeOnly);
           setActiveCategory(freeOnly ? null : category);
         }}
         onDisplayModeChange={setProviderDisplayMode}
         onNewProvider={() => router.push("/dashboard/providers/new")}
         onImportFromFile={() => setShowImportFromFileModal(true)}
+        onShowAllProvidersChange={() => undefined}
         searchQuery={searchQuery}
         setModelSearchQuery={setModelSearchQuery}
         setSearchQuery={setSearchQuery}
         showFreeOnly={showFreeOnly}
+        showAllProviders={showAllProviders}
         summaryStats={summaryStats}
         t={t}
         tc={tc}

@@ -170,6 +170,7 @@ export async function getSettings() {
     oidcAllowedSubjects: [], // optional sub or email whitelist
     mcpEnabled: false,
     a2aEnabled: false,
+    providerFilterChangeEnabled: false,
     hiddenSidebarItems: [],
     hiddenSidebarGroupLabels: [],
     sidebarSectionOrder: [],
@@ -296,10 +297,7 @@ export async function updateSettings(
   );
   const tx = db.transaction(() => {
     const currentRevision = readSettingsRevision(db);
-    if (
-      options?.expectedRevision !== undefined &&
-      options.expectedRevision !== currentRevision
-    ) {
+    if (options?.expectedRevision !== undefined && options.expectedRevision !== currentRevision) {
       throw new SettingsRevisionConflictError(currentRevision);
     }
     for (const [key, value] of Object.entries(updates)) {

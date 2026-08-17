@@ -64,6 +64,17 @@ describe("PATCH /api/settings", () => {
     expect(calledWith.hiddenSidebarItems).toEqual([]);
   });
 
+  it("updates the provider filter change permission via PATCH", async () => {
+    const req = createPatchRequest({ providerFilterChangeEnabled: true });
+    const res = await PATCH(req as any);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.providerFilterChangeEnabled).toBe(true);
+    expect(updateSettings).toHaveBeenCalledOnce();
+    const calledWith = (updateSettings as any).mock.calls[0][0];
+    expect(calledWith.providerFilterChangeEnabled).toBe(true);
+  });
+
   it("updates hiddenSidebarGroupLabels via PATCH", async () => {
     const req = createPatchRequest({ hiddenSidebarGroupLabels: ["logs", "audit"] });
     const res = await PATCH(req as any);

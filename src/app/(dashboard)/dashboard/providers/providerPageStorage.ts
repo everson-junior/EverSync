@@ -1,5 +1,6 @@
 export const SHOW_CONFIGURED_ONLY_STORAGE_KEY = "omniroute-providers-show-configured-only";
 export const PROVIDER_DISPLAY_MODE_STORAGE_KEY = "omniroute-providers-display-mode";
+export const CURATED_PROVIDER_CATALOG_STORAGE_KEY = "omniroute-providers-show-all";
 
 export type ProviderDisplayMode = "all" | "configured" | "compact";
 
@@ -15,6 +16,10 @@ interface StorageWriter extends StorageReader {
 type StorageReaderWriter = StorageReader & Partial<StorageWriter>;
 
 export function parseConfiguredOnlyPreference(value: string | null | undefined): boolean {
+  return value === "true";
+}
+
+export function parseShowAllProvidersPreference(value: string | null | undefined): boolean {
   return value === "true";
 }
 
@@ -40,6 +45,14 @@ export function readConfiguredOnlyPreference(storage: StorageReader | null = get
   return parseConfiguredOnlyPreference(storage.getItem(SHOW_CONFIGURED_ONLY_STORAGE_KEY));
 }
 
+export function readShowAllProvidersPreference(
+  storage: StorageReader | null = getBrowserStorage()
+): boolean {
+  if (!storage) return false;
+
+  return parseShowAllProvidersPreference(storage.getItem(CURATED_PROVIDER_CATALOG_STORAGE_KEY));
+}
+
 export function writeConfiguredOnlyPreference(
   enabled: boolean,
   storage: StorageWriter | null = getBrowserStorage()
@@ -52,6 +65,20 @@ export function writeConfiguredOnlyPreference(
   }
 
   storage.removeItem(SHOW_CONFIGURED_ONLY_STORAGE_KEY);
+}
+
+export function writeShowAllProvidersPreference(
+  enabled: boolean,
+  storage: StorageWriter | null = getBrowserStorage()
+) {
+  if (!storage) return;
+
+  if (enabled) {
+    storage.setItem(CURATED_PROVIDER_CATALOG_STORAGE_KEY, "true");
+    return;
+  }
+
+  storage.removeItem(CURATED_PROVIDER_CATALOG_STORAGE_KEY);
 }
 
 export function readProviderDisplayModePreference(

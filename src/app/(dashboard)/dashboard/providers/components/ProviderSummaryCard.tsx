@@ -38,16 +38,19 @@ interface ProviderSummaryCardProps {
   onServiceKindChange(kind: string | null): void;
   disabledConfigured: boolean;
   displayMode: ProviderDisplayMode;
+  filterControlsEnabled: boolean;
   modelSearchQuery: string;
   onBatchTest(mode: string): void;
   onCategoryChange(category: string | null, freeOnly: boolean): void;
   onDisplayModeChange(mode: ProviderDisplayMode): void;
   onNewProvider(): void;
   onImportFromFile(): void;
+  onShowAllProvidersChange(showAllProviders: boolean): void;
   searchQuery: string;
   setModelSearchQuery(value: string): void;
   setSearchQuery(value: string): void;
   showFreeOnly: boolean;
+  showAllProviders: boolean;
   summaryStats: ProviderSummaryStats;
   t: ProviderMessageTranslator;
   tc: ProviderMessageTranslator;
@@ -93,16 +96,19 @@ export default function ProviderSummaryCard({
   onServiceKindChange,
   disabledConfigured,
   displayMode,
+  filterControlsEnabled,
   modelSearchQuery,
   onBatchTest,
   onCategoryChange,
   onDisplayModeChange,
   onNewProvider,
   onImportFromFile,
+  onShowAllProvidersChange,
   searchQuery,
   setModelSearchQuery,
   setSearchQuery,
   showFreeOnly,
+  showAllProviders,
   summaryStats,
   t,
   tc,
@@ -206,6 +212,15 @@ export default function ProviderSummaryCard({
             onChange={onDisplayModeChange}
             t={t}
           />
+          <label className="flex items-center gap-2 text-xs font-medium text-text-muted cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showAllProviders}
+              onChange={(event) => onShowAllProvidersChange(event.target.checked)}
+              className="size-4 accent-primary"
+            />
+            <span>{providerText(t, "showAllProviders", "Mostrar todos os provedores")}</span>
+          </label>
           <Button size="sm" icon="add" onClick={onNewProvider}>
             {providerText(t, "onboardingWizardShort", "Onboarding Wizard")}
           </Button>
@@ -242,7 +257,8 @@ export default function ProviderSummaryCard({
               <button
                 key={cat.key ?? "all"}
                 onClick={() => onCategoryChange(cat.key, cat.key === "free")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
+                disabled={!filterControlsEnabled}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                   isActive
                     ? "bg-primary text-white border-primary"
                     : "bg-bg-subtle border-border text-text-muted hover:text-text-primary hover:border-primary/30"
@@ -271,7 +287,8 @@ export default function ProviderSummaryCard({
                 key={chip.key}
                 onClick={() => onServiceKindChange(isActive ? null : chip.key)}
                 aria-pressed={isActive}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors ${
+                disabled={!filterControlsEnabled}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                   isActive
                     ? "bg-primary text-white border-primary"
                     : "bg-bg-subtle border-border text-text-muted hover:text-text-primary hover:border-primary/30"
