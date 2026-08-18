@@ -12,6 +12,8 @@ import {
 import {
   PLUGIN_REGISTRY,
   getPluginDefinition,
+  getPluginForRoute,
+  resolvePluginIntegrity,
   type SidebarPluginDefinition,
 } from "../../src/lib/plugins/registry.ts";
 import {
@@ -56,6 +58,29 @@ test("the plugin registry contains only non-native, internal Sidebar items", () 
     .sort();
 
   assert.deepEqual([...PLUGIN_REGISTRY.keys()].sort(), expectedIds);
+});
+
+test("dynamic plugin routes resolve only registered Sidebar entries", () => {
+  assert.equal(getPluginForRoute("/dashboard/mcp")?.id, "mcp");
+  assert.equal(getPluginForRoute("/dashboard/mcp/tools")?.id, "mcp");
+  assert.equal(getPluginForRoute("/dashboard/not-a-plugin"), null);
+});
+
+test("plugins share a release checksum while allowing module-specific overrides", () => {
+  const plugin = getPluginDefinition("mcp");
+  assert.ok(plugin);
+  const sharedChecksum = "a".repeat(64);
+  const specificChecksum = "b".repeat(64);
+  process.env.EVERSYNC_PLUGIN_SHA256 = sharedChecksum;
+
+  try {
+    assert.equal(resolvePluginIntegrity(plugin), sharedChecksum);
+    process.env[plugin.integrityEnv] = specificChecksum;
+    assert.equal(resolvePluginIntegrity(plugin), specificChecksum);
+  } finally {
+    delete process.env.EVERSYNC_PLUGIN_SHA256;
+    delete process.env[plugin.integrityEnv];
+  }
 });
 
 test("checksum failure removes partial and final plugin cache state", async () => {

@@ -63,6 +63,8 @@ export function resolvePluginBundleUrl(
 }
 
 export function resolvePluginIntegrity(plugin: SidebarPluginDefinition): string | null {
-  const value = process.env[plugin.integrityEnv]?.trim().toLowerCase();
+  const value = (process.env[plugin.integrityEnv] ?? process.env.EVERSYNC_PLUGIN_SHA256)
+    ?.trim()
+    .toLowerCase();
   return value && /^[a-f0-9]{64}$/.test(value) ? value : null;
 }
