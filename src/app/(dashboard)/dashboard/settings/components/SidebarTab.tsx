@@ -16,9 +16,11 @@ import {
   arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Card, Toggle } from "@/shared/components";
+import { Card, ConfirmModal, Toggle } from "@/shared/components";
 import { cn } from "@/shared/utils/cn";
 import { useTranslations } from "next-intl";
+import { usePluginInstaller } from "@/shared/hooks/usePluginInstaller";
+import { useNotificationStore } from "@/store/notificationStore";
 import {
   HIDDEN_SIDEBAR_GROUP_LABELS_SETTING_KEY,
   HIDEABLE_SIDEBAR_GROUP_IDS,
@@ -57,7 +59,7 @@ interface SortableSectionProps {
   hiddenSet: Set<HideableSidebarItemId>;
   hiddenGroupLabelsSet: Set<HideableSidebarGroupId>;
   itemOrder: string[];
-  onToggleItem: (id: HideableSidebarItemId) => void;
+  onToggleItem: (item: SidebarItemDefinition) => void;
   onToggleGroupLabel: (id: HideableSidebarGroupId) => void;
   onItemReorder: (sectionId: SidebarSectionId, newOrder: string[]) => void;
   getLabel: (key: string, fallback: string) => string;
@@ -214,7 +216,7 @@ function SortableChildRow({ id, children }: { id: string; children: React.ReactN
 interface ItemRowProps {
   item: SidebarItemDefinition;
   hiddenSet: Set<HideableSidebarItemId>;
-  onToggleItem: (id: HideableSidebarItemId) => void;
+  onToggleItem: (item: SidebarItemDefinition) => void;
   getLabel: (key: string, fallback: string) => string;
 }
 
@@ -232,20 +234,13 @@ function GroupItemVisibilityControl({
 }: {
   item: SidebarItemDefinition;
   hiddenSet: Set<HideableSidebarItemId>;
-  onToggleItem: (id: HideableSidebarItemId) => void;
+  onToggleItem: (item: SidebarItemDefinition) => void;
 }) {
   const tSidebar = useTranslations("sidebar");
   const hideableId = isHideableSidebarItemId(item.id) ? item.id : null;
-  const isMinimalBuild = isMinimalBuildProfile();
-  const isNotMinimalItem = isMinimalBuild && hideableId !== null && !MINIMAL_SHOWN.has(hideableId);
-
-  if (hideableId !== null && !isNotMinimalItem) {
+  if (hideableId !== null) {
     return (
-      <Toggle
-        size="sm"
-        checked={!hiddenSet.has(hideableId)}
-        onChange={() => onToggleItem(hideableId)}
-      />
+      <Toggle size="sm" checked={!hiddenSet.has(hideableId)} onChange={() => onToggleItem(item)} />
     );
   }
 
@@ -263,9 +258,7 @@ function GroupItemVisibilityControl({
 function ItemRow({ item, hiddenSet, onToggleItem, getLabel }: ItemRowProps) {
   const tSidebar = useTranslations("sidebar");
   const hideableId = isHideableSidebarItemId(item.id) ? item.id : null;
-  const isMinimalBuild = isMinimalBuildProfile();
-  const isNotMinimalItem = isMinimalBuild && hideableId !== null && !MINIMAL_SHOWN.has(hideableId);
-  const isProtected = PROTECTED_ITEM_IDS.has(item.id) || hideableId === null || isNotMinimalItem;
+  const isProtected = PROTECTED_ITEM_IDS.has(item.id) || hideableId === null;
 
   return (
     <div className="flex items-center justify-between gap-4 px-4 py-3">
@@ -273,14 +266,7 @@ function ItemRow({ item, hiddenSet, onToggleItem, getLabel }: ItemRowProps) {
         <span className="material-symbols-outlined text-[16px] text-text-muted/50 shrink-0">
           {item.icon}
         </span>
-        <p
-          className={cn(
-            "font-medium truncate",
-            isNotMinimalItem && "text-text-muted/40 opacity-60"
-          )}
-        >
-          {getLabel(item.i18nKey, item.id)}
-        </p>
+        <p className="font-medium truncate">{getLabel(item.i18nKey, item.id)}</p>
       </div>
       {isProtected ? (
         <span
@@ -291,7 +277,7 @@ function ItemRow({ item, hiddenSet, onToggleItem, getLabel }: ItemRowProps) {
           lock
         </span>
       ) : (
-        <Toggle checked={!hiddenSet.has(hideableId)} onChange={() => onToggleItem(hideableId)} />
+        <Toggle checked={!hiddenSet.has(hideableId)} onChange={() => onToggleItem(item)} />
       )}
     </div>
   );
@@ -303,7 +289,7 @@ interface GroupRowProps {
   group: SidebarItemGroup;
   hiddenSet: Set<HideableSidebarItemId>;
   hiddenGroupLabelsSet: Set<HideableSidebarGroupId>;
-  onToggleItem: (id: HideableSidebarItemId) => void;
+  onToggleItem: (item: SidebarItemDefinition) => void;
   onToggleGroupLabel: (id: HideableSidebarGroupId) => void;
   getLabel: (key: string, fallback: string) => string;
 }
@@ -407,6 +393,9 @@ export default function SidebarTab() {
   const [confirmPreset, setConfirmPreset] = useState<SidebarPresetId | null>(null);
   const [showDebug, setShowDebug] = useState(false);
   const [providerFilterChangeEnabled, setProviderFilterChangeEnabled] = useState(false);
+  const [pendingPluginItem, setPendingPluginItem] = useState<SidebarItemDefinition | null>(null);
+  const { install, stateById } = usePluginInstaller();
+  const notify = useNotificationStore();
 
   useEffect(() => {
     fetch("/api/settings")
@@ -451,16 +440,40 @@ export default function SidebarTab() {
     }
   };
 
-  const toggleItem = (id: HideableSidebarItemId) => {
-    // Protected items can never be hidden
+  const applyItemVisibility = (id: HideableSidebarItemId) => {
     if (PROTECTED_ITEM_IDS.has(id)) return;
     const next = hiddenSidebarItems.includes(id)
-      ? hiddenSidebarItems.filter((x) => x !== id)
+      ? hiddenSidebarItems.filter((current) => current !== id)
       : [...hiddenSidebarItems, id];
     setHiddenSidebarItems(next);
-    // Any manual change → custom mode
     setActivePreset(null);
-    patch({ [HIDDEN_SIDEBAR_ITEMS_SETTING_KEY]: next, [SIDEBAR_PRESET_KEY]: null });
+    void patch({ [HIDDEN_SIDEBAR_ITEMS_SETTING_KEY]: next, [SIDEBAR_PRESET_KEY]: null });
+  };
+
+  const toggleItem = (item: SidebarItemDefinition) => {
+    if (!isHideableSidebarItemId(item.id) || PROTECTED_ITEM_IDS.has(item.id)) return;
+    const enabling = hiddenSidebarItems.includes(item.id);
+    if (enabling && !item.isNative) {
+      setPendingPluginItem(item);
+      return;
+    }
+    applyItemVisibility(item.id);
+  };
+
+  const confirmPluginInstall = async () => {
+    const item = pendingPluginItem;
+    if (!item || !isHideableSidebarItemId(item.id)) return;
+    const result = await install(item);
+    if (result.installed) {
+      applyItemVisibility(item.id);
+      setPendingPluginItem(null);
+      notify.success(`Extension ${getLabel(item.i18nKey, item.id)} installed`);
+      return;
+    }
+    setHiddenSidebarItems((current) =>
+      current.includes(item.id) ? current : [...current, item.id as HideableSidebarItemId]
+    );
+    notify.error(result.error ?? "Extension installation failed");
   };
 
   const hiddenSet = new Set(hiddenSidebarItems);
@@ -508,8 +521,15 @@ export default function SidebarTab() {
   const applyPreset = (presetId: SidebarPresetId) => {
     const preset = SIDEBAR_PRESETS.find((p) => p.id === presetId);
     if (!preset) return;
-    // Ensure protected items are never hidden, even if a preset includes them
-    const safeHidden = preset.hiddenItems.filter((id) => !PROTECTED_ITEM_IDS.has(id));
+    const dynamicItemIds = SIDEBAR_SECTIONS.flatMap(getSectionItems)
+      .filter((item) => !item.isNative && isHideableSidebarItemId(item.id))
+      .map((item) => item.id as HideableSidebarItemId);
+    const safeHidden = Array.from(
+      new Set([
+        ...preset.hiddenItems.filter((id) => !PROTECTED_ITEM_IDS.has(id)),
+        ...dynamicItemIds,
+      ])
+    );
     setHiddenSidebarItems(safeHidden);
     setHiddenSidebarGroupLabels([]);
     setSectionOrder([]);
@@ -749,6 +769,16 @@ export default function SidebarTab() {
           </p>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={pendingPluginItem !== null}
+        onClose={() => setPendingPluginItem(null)}
+        onConfirm={confirmPluginInstall}
+        title="Install extension"
+        message={`Do you want to install the ${pendingPluginItem ? getLabel(pendingPluginItem.i18nKey, pendingPluginItem.id) : ""} extension?`}
+        confirmText="Install"
+        variant="primary"
+        loading={Boolean(pendingPluginItem && stateById[pendingPluginItem.id] === "installing")}
+      />
     </Card>
   );
 }

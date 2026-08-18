@@ -128,6 +128,8 @@ export type SidebarSectionId =
 export interface SidebarItemDefinition {
   id: SidebarItemId;
   href: string;
+  /** Native items ship in the Minimal bundle; dynamic items require installation. */
+  isNative: boolean;
   i18nKey: string;
   subtitleKey?: string;
   /** Literal label shown when `i18nKey` has no translation (avoids per-locale edits). */

@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useInsertionEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import Sidebar from "../Sidebar";
 import Header from "../Header";
@@ -17,9 +18,11 @@ import {
 } from "@/shared/utils/dashboardCsrf";
 import { installBasePathFetch } from "@/shared/utils/basePathFetch";
 import { isRouteAllowedInBasicProfile } from "@/shared/constants/sidebarVisibility";
+import { getPluginForRoute } from "@/lib/plugins/registry";
 
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
 const isE2EMode = process.env.NEXT_PUBLIC_OMNIROUTE_E2E_MODE === "1";
+const PluginRouteHost = dynamic(() => import("./PluginRouteHost"), { ssr: false });
 
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
@@ -130,7 +133,15 @@ export default function DashboardLayout({ children }) {
           <div className="max-w-[3840px] mx-auto w-full h-full min-h-0 flex flex-col">
             <Breadcrumbs />
             <div className="flex-1 min-h-0">
-              {isRouteAllowedInBasicProfile(pathname || "") ? children : <FeatureDisabledNotice />}
+              {(() => {
+                const plugin = getPluginForRoute(pathname || "");
+                if (plugin) return <PluginRouteHost pluginId={plugin.id} />;
+                return isRouteAllowedInBasicProfile(pathname || "") ? (
+                  children
+                ) : (
+                  <FeatureDisabledNotice />
+                );
+              })()}
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 export * from "./sidebarVisibility/types";
 export { COMPRESSION_CONTEXT_GROUP, SIDEBAR_SECTIONS } from "./sidebarVisibility/sections";
 
+import { SIDEBAR_SECTIONS } from "./sidebarVisibility/sections";
 import { HIDEABLE_SIDEBAR_ITEM_IDS } from "./sidebarVisibility/types";
 import type {
   HideableSidebarItemId,
@@ -152,49 +153,24 @@ export function isMinimalBuildProfile(): boolean {
 export function isRouteAllowedInBasicProfile(pathname: string): boolean {
   if (!isMinimalBuildProfile()) return true;
 
-  // Allowed path prefixes for Basic (Minimal) profile
-  const allowedPrefixes = [
-    "/home",
-    "/dashboard/endpoint",
-    "/dashboard/api-manager",
-    "/dashboard/providers",
-    "/dashboard/combos",
-    "/dashboard/analytics",
-    "/dashboard/costs",
-    "/dashboard/logs",
-    "/dashboard/health",
-    "/dashboard/settings/general",
-    "/dashboard/settings/sidebar",
-    "/dashboard/changelog",
-    "/docs",
-    "/changelog",
-  ];
-
-  // Exact matches or subpaths of allowed prefixes
   if (pathname === "/dashboard" || pathname === "/dashboard/") return true;
   if (pathname === "/dashboard/settings" || pathname === "/dashboard/settings/") return true;
 
-  // Disallow embedded services subpath under providers
-  if (pathname.startsWith("/dashboard/providers/services")) return false;
-
-  return allowedPrefixes.some((prefix) => pathname === prefix || pathname.startsWith(prefix + "/"));
+  return getSectionItems({ children: SIDEBAR_SECTIONS.flatMap((section) => section.children) })
+    .filter((item) => item.isNative && !item.external)
+    .some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
 }
 
-export const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
-  "home",
-  "endpoints",
-  "api-manager",
-  "providers",
-  "combos",
-  "analytics",
-  "costs",
-  "logs",
-  "health",
-  "settings-general",
-  "settings-sidebar",
-  "docs",
-  "changelog",
-]);
+export const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set(
+  SIDEBAR_SECTIONS.flatMap((section) => getSectionItems(section))
+    .filter(
+      (item) =>
+        item.isNative &&
+        item.id !== "issues" &&
+        HIDEABLE_SIDEBAR_ITEM_IDS.includes(item.id as HideableSidebarItemId)
+    )
+    .map((item) => item.id as HideableSidebarItemId)
+);
 
 const DEVELOPER_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
   "home",
