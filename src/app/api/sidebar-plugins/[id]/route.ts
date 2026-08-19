@@ -3,8 +3,10 @@ import { buildErrorBody } from "@omniroute/open-sse/utils/error";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import {
   clearInstalledPlugin,
+  getPluginInstallFailureCategory,
   installPluginBundle,
   readInstalledPlugin,
+  toPublicInstalledPlugin,
 } from "@/lib/plugins/bundleStore";
 import { getPluginDefinition } from "@/lib/plugins/registry";
 import { sidebarPluginIdSchema } from "@/shared/validation/schemas";
@@ -21,7 +23,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!plugin) return NextResponse.json({ error: "Unknown dynamic plugin" }, { status: 404 });
 
   const installed = await readInstalledPlugin(plugin);
-  return NextResponse.json({ installed: Boolean(installed), plugin: installed });
+  return NextResponse.json({
+    installed: Boolean(installed),
+    plugin: installed ? toPublicInstalledPlugin(installed) : null,
+  });
 }
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -31,12 +36,18 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!plugin) return NextResponse.json({ error: "Unknown dynamic plugin" }, { status: 404 });
 
   try {
-    const installed = await installPluginBundle(plugin);
-    return NextResponse.json({ installed: true, plugin: installed }, { status: 201 });
+    const installed = await installPluginBundle(plugin, undefined, { signal: request.signal });
+    return NextResponse.json(
+      { installed: true, plugin: toPublicInstalledPlugin(installed) },
+      { status: 201 }
+    );
   } catch (error) {
-    await clearInstalledPlugin(plugin);
-    console.error("[sidebar-plugins] Installation failed:", error);
-    return NextResponse.json(buildErrorBody(502, "Failed to install extension"), { status: 502 });
+    const category = getPluginInstallFailureCategory(error);
+    console.error(`[sidebar-plugins] Installation failed (${category})`);
+    return NextResponse.json(
+      { ...buildErrorBody(502, "Failed to install extension"), category },
+      { status: 502 }
+    );
   }
 }
 

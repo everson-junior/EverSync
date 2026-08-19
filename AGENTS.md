@@ -1,5 +1,19 @@
 # omniroute — Agent Guidelines
 
+## EverSync Branch Isolation (mandatory)
+
+- `Basic` is the application branch. Make application changes directly on `Basic` and commit them
+  independently.
+- `modules/main` is the module source and publication branch. It is independent from `Basic` and
+  must never update it.
+- **Never merge, pull, rebase, or cherry-pick `modules/main` into `Basic`.** Do not copy a commit or
+  a full diff from `modules/main` into `Basic` either.
+- Before any commit, push, or branch integration, run `git branch --show-current`. If the current
+  branch is `Basic`, changes must have been authored and reviewed specifically for the application
+  branch.
+- If equivalent behavior is required in both branches, implement and validate it separately in each
+  branch. Shared intent does not make the branches merge targets.
+
 ## Project
 
 Unified AI proxy/router — route any LLM through one endpoint. Multi-provider support

@@ -1,12 +1,6 @@
-import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
-import {
-  clearInstalledPlugin,
-  pluginBundlePath,
-  readInstalledPlugin,
-} from "@/lib/plugins/bundleStore";
+import { readVerifiedInstalledPlugin } from "@/lib/plugins/bundleStore";
 import { getPluginDefinition } from "@/lib/plugins/registry";
 import { sidebarPluginIdSchema } from "@/shared/validation/schemas";
 
@@ -18,21 +12,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const plugin = parsed.success ? getPluginDefinition(parsed.data) : null;
   if (!plugin) return NextResponse.json({ error: "Unknown dynamic plugin" }, { status: 404 });
 
-  const installed = await readInstalledPlugin(plugin);
+  const installed = await readVerifiedInstalledPlugin(plugin);
   if (!installed)
     return NextResponse.json({ error: "Extension is not installed" }, { status: 404 });
 
-  const body = await readFile(pluginBundlePath(plugin));
-  const checksum = createHash("sha256").update(body).digest("hex");
-  if (checksum !== installed.checksum) {
-    await clearInstalledPlugin(plugin);
-    return NextResponse.json({ error: "Cached extension checksum mismatch" }, { status: 409 });
-  }
-
-  return new NextResponse(body, {
+  return new NextResponse(installed.body, {
     headers: {
       "Content-Type": "text/javascript; charset=utf-8",
-      "Cache-Control": "private, max-age=31536000, immutable",
+      "Cache-Control": "private, no-store, max-age=0, must-revalidate",
+      Pragma: "no-cache",
       "X-Content-Type-Options": "nosniff",
     },
   });

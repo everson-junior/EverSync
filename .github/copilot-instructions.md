@@ -1,5 +1,14 @@
 # OmniRoute PR and Coverage Instructions
 
+## EverSync Branch Isolation
+
+- `Basic` is the application branch; update and commit it independently.
+- `modules/main` is an independent module source/publication branch and never updates `Basic`.
+- Never merge, pull, rebase, cherry-pick, or copy a complete commit/diff from `modules/main` into
+  `Basic`.
+- Check `git branch --show-current` before every commit, push, or branch integration. Changes needed
+  in both branches must be implemented and validated separately.
+
 - Treat `npm run test:coverage` as a required gate for PR work.
 - The repository minimum is `60%` for statements, lines, functions, and branches.
 - If a PR changes production code in `src/`, `open-sse/`, `electron/`, or `bin/`, it must include automated tests in the same PR.

@@ -12,12 +12,13 @@ interface PluginInstallResult {
 
 export function usePluginInstaller() {
   const [stateById, setStateById] = useState<Record<string, PluginInstallState>>({});
-  const activeController = useRef<AbortController | null>(null);
+  const activeInstall = useRef<{ id: string; controller: AbortController } | null>(null);
 
   useEffect(
     () => () => {
-      activeController.current?.abort();
-      activeController.current = null;
+      const active = activeInstall.current;
+      active?.controller.abort();
+      activeInstall.current = null;
     },
     []
   );
@@ -25,10 +26,15 @@ export function usePluginInstaller() {
   const install = useCallback(async (item: SidebarItemDefinition): Promise<PluginInstallResult> => {
     if (item.isNative) return { installed: true };
 
-    activeController.current?.abort();
+    const previous = activeInstall.current;
+    previous?.controller.abort();
     const controller = new AbortController();
-    activeController.current = controller;
-    setStateById((current) => ({ ...current, [item.id]: "installing" }));
+    activeInstall.current = { id: item.id, controller };
+    setStateById((current) => ({
+      ...current,
+      ...(previous ? { [previous.id]: "idle" as const } : {}),
+      [item.id]: "installing",
+    }));
 
     try {
       const response = await fetch(`/api/sidebar-plugins/${encodeURIComponent(item.id)}`, {
@@ -36,20 +42,20 @@ export function usePluginInstaller() {
         signal: controller.signal,
       });
       if (!response.ok) throw new Error(`Installation failed (${response.status})`);
+      if (activeInstall.current?.controller !== controller) {
+        return { installed: false, error: "Installation cancelled" };
+      }
       setStateById((current) => ({ ...current, [item.id]: "installed" }));
       return { installed: true };
     } catch (error) {
       if (controller.signal.aborted) return { installed: false, error: "Installation cancelled" };
-      await fetch(`/api/sidebar-plugins/${encodeURIComponent(item.id)}`, {
-        method: "DELETE",
-      }).catch(() => undefined);
       setStateById((current) => ({ ...current, [item.id]: "error" }));
       return {
         installed: false,
         error: error instanceof Error ? error.message : "Installation failed",
       };
     } finally {
-      if (activeController.current === controller) activeController.current = null;
+      if (activeInstall.current?.controller === controller) activeInstall.current = null;
     }
   }, []);
 
