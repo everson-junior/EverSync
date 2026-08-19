@@ -133,9 +133,13 @@ test("strict entries compile to a native ESM runtime envelope using the host Rea
     let bundleSource = await readFile(bundlePath, "utf8");
     assert.equal(manifest.sourceMode, "strict");
     assert.equal(manifest.sourceSha, sourceSha);
+    assert.match(bundleSource, /^\/\/ EVERSYNC_SIDEBAR_PLUGIN_ENVELOPE /);
+    assert.doesNotMatch(bundleSource, /Dynamic require of|\b__require\s*\(/);
     assert.doesNotMatch(bundleSource, /from\s+["'](?:react|react\/jsx-runtime|@eversync\/)/);
     assert.match(bundleSource, /from\s+["']\/api\/sidebar-plugins\/runtime\/react["']/);
+    assert.match(bundleSource, /from\s+["']\/api\/sidebar-plugins\/runtime\/react-jsx-runtime["']/);
     assert.match(bundleSource, /from\s+["']\/api\/sidebar-plugins\/runtime\/plugin-host["']/);
+    assert.match(bundleSource, /export\s*\{[^}]*default|export\s+default/);
 
     const hostReact = {
       createContext(defaultValue: unknown) {

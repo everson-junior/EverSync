@@ -89,6 +89,9 @@ function rejectNonLiteralDynamicImports(source: string, sourcePath: string): voi
 }
 
 function assertSafeModuleOutput(source: string, id: string): void {
+  if (/\bDynamic require of\b|\b__require\s*\(/.test(source)) {
+    throw new Error(`CommonJS dynamic require shim remains in output for '${id}'`);
+  }
   const staticImports = source.matchAll(
     /\b(?:import|export)\s+(?:[^"']*?\s+from\s+)?["']([^"']+)["']/g
   );
