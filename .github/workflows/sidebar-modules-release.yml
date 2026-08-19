@@ -73,7 +73,7 @@ jobs:
           node-version: "24"
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --no-frozen-lockfile --ignore-scripts
 
       - name: Verify release version
         shell: bash
