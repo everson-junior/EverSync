@@ -11,6 +11,7 @@ const HOME_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "home",
     href: "/home",
+    isNative: true,
     i18nKey: "home",
     subtitleKey: "homeSubtitle",
     icon: "home",
@@ -22,6 +23,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "endpoints",
     href: "/dashboard/endpoint",
+    isNative: true,
     i18nKey: "endpoints",
     subtitleKey: "endpointsSubtitle",
     icon: "api",
@@ -29,6 +31,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "api-manager",
     href: "/dashboard/api-manager",
+    isNative: true,
     i18nKey: "apiManager",
     subtitleKey: "apiManagerSubtitle",
     icon: "vpn_key",
@@ -36,6 +39,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "providers",
     href: "/dashboard/providers",
+    isNative: true,
     i18nKey: "providers",
     subtitleKey: "providersSubtitle",
     icon: "dns",
@@ -43,6 +47,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "embedded-services",
     href: "/dashboard/providers/services",
+    isNative: false,
     i18nKey: "embeddedServices",
     subtitleKey: "embeddedServicesSubtitle",
     icon: "deployed_code",
@@ -50,6 +55,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "combos",
     href: "/dashboard/combos",
+    isNative: true,
     i18nKey: "combos",
     subtitleKey: "combosSubtitle",
     icon: "layers",
@@ -57,6 +63,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "combos-live",
     href: "/dashboard/combos/live",
+    isNative: false,
     i18nKey: "combosLive",
     labelFallback: "Combo Studio",
     subtitleKey: "combosLiveSubtitle",
@@ -66,6 +73,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "quota",
     href: "/dashboard/quota",
+    isNative: false,
     i18nKey: "providerQuota",
     subtitleKey: "providerQuotaSubtitle",
     icon: "tune",
@@ -73,6 +81,7 @@ const OMNI_PROXY_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "costs-quota-share",
     href: "/dashboard/costs/quota-share",
+    isNative: false,
     i18nKey: "costsQuotaShare",
     subtitleKey: "costsQuotaShareSubtitle",
     icon: "pie_chart",
@@ -89,6 +98,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-settings",
       href: "/dashboard/context/settings",
+      isNative: false,
       i18nKey: "contextSettings",
       labelFallback: "Compression Settings",
       subtitleKey: "contextSettingsSubtitle",
@@ -98,6 +108,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-combos",
       href: "/dashboard/context/combos",
+      isNative: false,
       i18nKey: "contextCombos",
       subtitleKey: "contextCombosSubtitle",
       icon: "hub",
@@ -105,6 +116,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-caveman",
       href: "/dashboard/context/caveman",
+      isNative: false,
       i18nKey: "contextCaveman",
       subtitleKey: "contextCavemanSubtitle",
       icon: "compress",
@@ -112,6 +124,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-rtk",
       href: "/dashboard/context/rtk",
+      isNative: false,
       i18nKey: "contextRtk",
       subtitleKey: "contextRtkSubtitle",
       icon: "filter_alt",
@@ -119,6 +132,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-headroom",
       href: "/dashboard/context/headroom",
+      isNative: false,
       i18nKey: "contextHeadroom",
       labelFallback: "Headroom",
       subtitleKey: "contextHeadroomSubtitle",
@@ -128,6 +142,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-session-dedup",
       href: "/dashboard/context/session-dedup",
+      isNative: false,
       i18nKey: "contextSessionDedup",
       labelFallback: "Session Dedup",
       subtitleKey: "contextSessionDedupSubtitle",
@@ -137,6 +152,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-ccr",
       href: "/dashboard/context/ccr",
+      isNative: false,
       i18nKey: "contextCcr",
       labelFallback: "CCR",
       subtitleKey: "contextCcrSubtitle",
@@ -146,6 +162,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-llmlingua",
       href: "/dashboard/context/llmlingua",
+      isNative: false,
       i18nKey: "contextLlmlingua",
       labelFallback: "LLMLingua",
       subtitleKey: "contextLlmlinguaSubtitle",
@@ -155,6 +172,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-lite",
       href: "/dashboard/context/lite",
+      isNative: false,
       i18nKey: "contextLite",
       labelFallback: "Lite",
       subtitleKey: "contextLiteSubtitle",
@@ -164,6 +182,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-aggressive",
       href: "/dashboard/context/aggressive",
+      isNative: false,
       i18nKey: "contextAggressive",
       labelFallback: "Aggressive",
       subtitleKey: "contextAggressiveSubtitle",
@@ -173,6 +192,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-ultra",
       href: "/dashboard/context/ultra",
+      isNative: false,
       i18nKey: "contextUltra",
       labelFallback: "Ultra",
       subtitleKey: "contextUltraSubtitle",
@@ -182,6 +202,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "context-omniglyph",
       href: "/dashboard/context/omniglyph",
+      isNative: false,
       i18nKey: "contextOmniglyph",
       labelFallback: "OmniGlyph",
       subtitleKey: "contextOmniglyphSubtitle",
@@ -191,6 +212,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "compression-studio",
       href: "/dashboard/compression/studio",
+      isNative: false,
       i18nKey: "compressionStudio",
       labelFallback: "Compression Studio",
       subtitleKey: "compressionStudioSubtitle",
@@ -200,6 +222,7 @@ export const COMPRESSION_CONTEXT_GROUP: SidebarItemGroup = {
     {
       id: "compression-exclusions",
       href: "/dashboard/compression/exclusions",
+      isNative: false,
       i18nKey: "compressionExclusions",
       labelFallback: "Exclusions",
       subtitleKey: "compressionExclusionsSubtitle",
@@ -218,6 +241,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "cli-code",
       href: "/dashboard/cli-code",
+      isNative: false,
       i18nKey: "cliCode",
       subtitleKey: "cliCodeSubtitle",
       icon: "terminal",
@@ -225,6 +249,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "cli-agents",
       href: "/dashboard/cli-agents",
+      isNative: false,
       i18nKey: "cliAgents",
       subtitleKey: "cliAgentsSubtitle",
       icon: "smart_toy",
@@ -232,6 +257,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "acp-agents",
       href: "/dashboard/acp-agents",
+      isNative: false,
       i18nKey: "acpAgents",
       subtitleKey: "acpAgentsSubtitle",
       icon: "device_hub",
@@ -239,6 +265,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "cloud-agents",
       href: "/dashboard/cloud-agents",
+      isNative: false,
       i18nKey: "cloudAgents",
       subtitleKey: "cloudAgentsSubtitle",
       icon: "cloud",
@@ -246,6 +273,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "agent-bridge",
       href: "/dashboard/tools/agent-bridge",
+      isNative: false,
       i18nKey: "agentBridge",
       subtitleKey: "agentBridgeSubtitle",
       icon: "link",
@@ -253,6 +281,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "traffic-inspector",
       href: "/dashboard/tools/traffic-inspector",
+      isNative: false,
       i18nKey: "trafficInspector",
       subtitleKey: "trafficInspectorSubtitle",
       icon: "network_check",
@@ -260,6 +289,7 @@ const TOOLS_GROUP: SidebarItemGroup = {
     {
       id: "discovery",
       href: "/dashboard/discovery",
+      isNative: false,
       i18nKey: "discovery",
       subtitleKey: "discoverySubtitle",
       icon: "travel_explore",
@@ -276,6 +306,7 @@ const INTEGRATIONS_GROUP: SidebarItemGroup = {
     {
       id: "api-endpoints",
       href: "/dashboard/api-endpoints",
+      isNative: false,
       i18nKey: "apiEndpoints",
       subtitleKey: "apiEndpointsSubtitle",
       icon: "api",
@@ -283,6 +314,7 @@ const INTEGRATIONS_GROUP: SidebarItemGroup = {
     {
       id: "webhooks",
       href: "/dashboard/webhooks",
+      isNative: false,
       i18nKey: "webhooks",
       subtitleKey: "webhooksSubtitle",
       icon: "webhook",
@@ -293,6 +325,7 @@ const INTEGRATIONS_GROUP: SidebarItemGroup = {
 const PROXY_ITEM: SidebarItemDefinition = {
   id: "proxy",
   href: "/dashboard/system/proxy",
+  isNative: true,
   i18nKey: "proxy",
   subtitleKey: "proxySubtitle",
   icon: "dns",
@@ -302,6 +335,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "analytics",
     href: "/dashboard/analytics",
+    isNative: true,
     i18nKey: "usage",
     subtitleKey: "usageSubtitle",
     icon: "analytics",
@@ -309,6 +343,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "analytics-combo-health",
     href: "/dashboard/analytics/combo-health",
+    isNative: false,
     i18nKey: "analyticsComboHealth",
     subtitleKey: "analyticsComboHealthSubtitle",
     icon: "monitor_heart",
@@ -316,6 +351,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "analytics-utilization",
     href: "/dashboard/analytics/utilization",
+    isNative: false,
     i18nKey: "analyticsUtilization",
     subtitleKey: "analyticsUtilizationSubtitle",
     icon: "bar_chart",
@@ -323,6 +359,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "cache",
     href: "/dashboard/cache",
+    isNative: false,
     i18nKey: "cache",
     subtitleKey: "cacheSubtitle",
     icon: "cached",
@@ -330,6 +367,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "analytics-compression",
     href: "/dashboard/analytics/compression",
+    isNative: false,
     i18nKey: "analyticsCompression",
     subtitleKey: "analyticsCompressionSubtitle",
     icon: "compress",
@@ -337,6 +375,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "analytics-search",
     href: "/dashboard/analytics/search",
+    isNative: false,
     i18nKey: "analyticsSearch",
     subtitleKey: "analyticsSearchSubtitle",
     icon: "manage_search",
@@ -344,6 +383,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "analytics-evals",
     href: "/dashboard/analytics/evals",
+    isNative: false,
     i18nKey: "analyticsEvals",
     subtitleKey: "analyticsEvalsSubtitle",
     icon: "labs",
@@ -351,6 +391,7 @@ const ANALYTICS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "provider-stats",
     href: "/dashboard/provider-stats",
+    isNative: false,
     i18nKey: "providerStats",
     subtitleKey: "providerStatsSubtitle",
     icon: "speed",
@@ -361,6 +402,7 @@ const MONITORING_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "activity",
     href: "/dashboard/activity",
+    isNative: false,
     i18nKey: "activity",
     subtitleKey: "activitySubtitle",
     icon: "timeline",
@@ -376,6 +418,7 @@ const LOGS_GROUP: SidebarItemGroup = {
     {
       id: "logs",
       href: "/dashboard/logs",
+      isNative: true,
       i18nKey: "logs",
       subtitleKey: "logsSubtitle",
       icon: "description",
@@ -383,6 +426,7 @@ const LOGS_GROUP: SidebarItemGroup = {
     {
       id: "logs-proxy",
       href: "/dashboard/logs/proxy",
+      isNative: false,
       i18nKey: "logsProxy",
       subtitleKey: "logsProxySubtitle",
       icon: "lan",
@@ -390,6 +434,7 @@ const LOGS_GROUP: SidebarItemGroup = {
     {
       id: "logs-console",
       href: "/dashboard/logs/console",
+      isNative: false,
       i18nKey: "consoleLogs",
       subtitleKey: "consoleLogsSubtitle",
       icon: "terminal",
@@ -397,6 +442,7 @@ const LOGS_GROUP: SidebarItemGroup = {
     {
       id: "logs-timeline",
       href: "/dashboard/logs/timeline",
+      isNative: false,
       i18nKey: "logsTimeline",
       subtitleKey: "logsTimelineSubtitle",
       icon: "view_timeline",
@@ -413,6 +459,7 @@ const SYSTEM_GROUP: SidebarItemGroup = {
     {
       id: "health",
       href: "/dashboard/health",
+      isNative: true,
       i18nKey: "health",
       subtitleKey: "healthSubtitle",
       icon: "health_and_safety",
@@ -420,6 +467,7 @@ const SYSTEM_GROUP: SidebarItemGroup = {
     {
       id: "runtime",
       href: "/dashboard/runtime",
+      isNative: false,
       i18nKey: "runtime",
       subtitleKey: "runtimeSubtitle",
       icon: "bolt",
@@ -431,6 +479,7 @@ const COSTS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "costs",
     href: "/dashboard/costs",
+    isNative: true,
     i18nKey: "costsOverview",
     subtitleKey: "costsOverviewSubtitle",
     icon: "account_balance_wallet",
@@ -438,6 +487,7 @@ const COSTS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "costs-pricing",
     href: "/dashboard/costs/pricing",
+    isNative: false,
     i18nKey: "costsPricing",
     subtitleKey: "costsPricingSubtitle",
     icon: "price_change",
@@ -445,6 +495,7 @@ const COSTS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "costs-budget",
     href: "/dashboard/costs/budget",
+    isNative: false,
     i18nKey: "costsBudget",
     subtitleKey: "costsBudgetSubtitle",
     icon: "savings",
@@ -452,6 +503,7 @@ const COSTS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "costs-free-tiers",
     href: "/dashboard/free-tiers",
+    isNative: false,
     i18nKey: "costsFreeTiers",
     subtitleKey: "costsFreeTiersSubtitle",
     icon: "request_quote",
@@ -459,6 +511,7 @@ const COSTS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "free-provider-rankings",
     href: "/dashboard/free-provider-rankings",
+    isNative: false,
     i18nKey: "freeProviderRankings",
     subtitleKey: "freeProviderRankingsSubtitle",
     icon: "leaderboard",
@@ -474,6 +527,7 @@ const AUDIT_GROUP: SidebarItemGroup = {
     {
       id: "audit",
       href: "/dashboard/audit",
+      isNative: false,
       i18nKey: "auditLog",
       subtitleKey: "auditLogSubtitle",
       icon: "policy",
@@ -481,6 +535,7 @@ const AUDIT_GROUP: SidebarItemGroup = {
     {
       id: "audit-mcp",
       href: "/dashboard/audit/mcp",
+      isNative: false,
       i18nKey: "auditMcp",
       subtitleKey: "auditMcpSubtitle",
       icon: "security",
@@ -488,6 +543,7 @@ const AUDIT_GROUP: SidebarItemGroup = {
     {
       id: "audit-a2a",
       href: "/dashboard/audit/a2a",
+      isNative: false,
       i18nKey: "auditA2a",
       subtitleKey: "auditA2aSubtitle",
       icon: "device_hub",
@@ -499,6 +555,7 @@ const DEVTOOLS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "translator",
     href: "/dashboard/translator",
+    isNative: false,
     i18nKey: "translator",
     subtitleKey: "translatorSubtitle",
     icon: "translate",
@@ -506,6 +563,7 @@ const DEVTOOLS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "playground",
     href: "/dashboard/playground",
+    isNative: false,
     i18nKey: "playground",
     subtitleKey: "playgroundSubtitle",
     icon: "science",
@@ -513,6 +571,7 @@ const DEVTOOLS_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "search-tools",
     href: "/dashboard/search-tools",
+    isNative: false,
     i18nKey: "searchTools",
     subtitleKey: "searchToolsSubtitle",
     icon: "manage_search",
@@ -522,6 +581,7 @@ const DEVTOOLS_ITEMS: readonly SidebarItemDefinition[] = [
 const MCP_ITEM: SidebarItemDefinition = {
   id: "mcp",
   href: "/dashboard/mcp",
+  isNative: false,
   i18nKey: "mcp",
   subtitleKey: "mcpSubtitle",
   icon: "hub",
@@ -531,6 +591,7 @@ const AGENTIC_FEATURES_ITEMS: readonly SidebarSectionChild[] = [
   {
     id: "memory",
     href: "/dashboard/memory",
+    isNative: false,
     i18nKey: "memory",
     subtitleKey: "memorySubtitle",
     icon: "psychology",
@@ -538,6 +599,7 @@ const AGENTIC_FEATURES_ITEMS: readonly SidebarSectionChild[] = [
   {
     id: "agent-skills",
     href: "/dashboard/agent-skills",
+    isNative: false,
     i18nKey: "agentSkills",
     subtitleKey: "agentSkillsSubtitle",
     icon: "share",
@@ -545,6 +607,7 @@ const AGENTIC_FEATURES_ITEMS: readonly SidebarSectionChild[] = [
   {
     id: "chaos-config",
     href: "/dashboard/chaos",
+    isNative: false,
     i18nKey: "chaosConfig",
     labelFallback: "Chaos Mode",
     subtitleKey: "chaosConfigSubtitle",
@@ -554,6 +617,7 @@ const AGENTIC_FEATURES_ITEMS: readonly SidebarSectionChild[] = [
   {
     id: "skills",
     href: "/dashboard/omni-skills",
+    isNative: false,
     i18nKey: "omniSkills",
     subtitleKey: "omniSkillsSubtitle",
     icon: "auto_fix_high",
@@ -562,6 +626,7 @@ const AGENTIC_FEATURES_ITEMS: readonly SidebarSectionChild[] = [
   {
     id: "a2a",
     href: "/dashboard/a2a",
+    isNative: false,
     i18nKey: "a2a",
     subtitleKey: "a2aSubtitle",
     icon: "device_hub",
@@ -569,6 +634,7 @@ const AGENTIC_FEATURES_ITEMS: readonly SidebarSectionChild[] = [
   {
     id: "plugins",
     href: "/dashboard/plugins",
+    isNative: false,
     i18nKey: "plugins",
     subtitleKey: "pluginsSubtitle",
     icon: "extension",
@@ -584,6 +650,7 @@ const GAMIFICATION_GROUP: SidebarItemGroup = {
     {
       id: "leaderboard",
       href: "/dashboard/leaderboard",
+      isNative: false,
       i18nKey: "leaderboard",
       subtitleKey: "leaderboardSubtitle",
       icon: "emoji_events",
@@ -591,6 +658,7 @@ const GAMIFICATION_GROUP: SidebarItemGroup = {
     {
       id: "profile",
       href: "/dashboard/profile",
+      isNative: false,
       i18nKey: "profile",
       subtitleKey: "profileSubtitle",
       icon: "person",
@@ -598,6 +666,7 @@ const GAMIFICATION_GROUP: SidebarItemGroup = {
     {
       id: "tokens",
       href: "/dashboard/tokens",
+      isNative: false,
       i18nKey: "tokens",
       subtitleKey: "tokensSubtitle",
       icon: "toll",
@@ -609,6 +678,7 @@ const OTHER_FEATURES_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "media",
     href: "/dashboard/cache/media",
+    isNative: false,
     i18nKey: "media",
     subtitleKey: "mediaSubtitle",
     icon: "perm_media",
@@ -624,6 +694,7 @@ const BATCH_GROUP: SidebarItemGroup = {
     {
       id: "batch",
       href: "/dashboard/batch",
+      isNative: false,
       i18nKey: "batch",
       subtitleKey: "batchSubtitle",
       icon: "view_list",
@@ -631,6 +702,7 @@ const BATCH_GROUP: SidebarItemGroup = {
     {
       id: "batch-files",
       href: "/dashboard/batch/files",
+      isNative: false,
       i18nKey: "batchFiles",
       subtitleKey: "batchFilesSubtitle",
       icon: "folder",
@@ -642,6 +714,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-general",
     href: "/dashboard/settings/general",
+    isNative: true,
     i18nKey: "settingsGeneral",
     subtitleKey: "settingsGeneralSubtitle",
     icon: "tune",
@@ -649,6 +722,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-appearance",
     href: "/dashboard/settings/appearance",
+    isNative: false,
     i18nKey: "settingsAppearance",
     subtitleKey: "settingsAppearanceSubtitle",
     icon: "palette",
@@ -656,6 +730,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-ai",
     href: "/dashboard/settings/ai",
+    isNative: false,
     i18nKey: "settingsAi",
     subtitleKey: "settingsAiSubtitle",
     icon: "auto_awesome",
@@ -663,6 +738,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-routing",
     href: "/dashboard/settings/routing",
+    isNative: false,
     i18nKey: "globalRouting",
     subtitleKey: "globalRoutingSubtitle",
     icon: "route",
@@ -670,6 +746,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-resilience",
     href: "/dashboard/settings/resilience",
+    isNative: false,
     i18nKey: "settingsResilience",
     subtitleKey: "settingsResilienceSubtitle",
     icon: "health_and_safety",
@@ -677,6 +754,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-advanced",
     href: "/dashboard/settings/advanced",
+    isNative: false,
     i18nKey: "settingsAdvanced",
     subtitleKey: "settingsAdvancedSubtitle",
     icon: "engineering",
@@ -684,6 +762,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-security",
     href: "/dashboard/settings/security",
+    isNative: false,
     i18nKey: "settingsSecurity",
     subtitleKey: "settingsSecuritySubtitle",
     icon: "shield",
@@ -691,6 +770,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-access-tokens",
     href: "/dashboard/settings/access-tokens",
+    isNative: false,
     i18nKey: "settingsAccessTokens",
     labelFallback: "Access Tokens",
     subtitleKey: "settingsAccessTokensSubtitle",
@@ -699,6 +779,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-feature-flags",
     href: "/dashboard/settings/feature-flags",
+    isNative: false,
     i18nKey: "settingsFeatureFlags",
     subtitleKey: "settingsFeatureFlagsSubtitle",
     icon: "flag",
@@ -706,6 +787,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-cache",
     href: "/dashboard/settings/cache",
+    isNative: false,
     i18nKey: "settingsCache",
     subtitleKey: "settingsCacheSubtitle",
     icon: "memory",
@@ -713,6 +795,7 @@ const CONFIGURATION_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "settings-sidebar",
     href: "/dashboard/settings/sidebar",
+    isNative: true,
     i18nKey: "settingsSidebar",
     subtitleKey: "settingsSidebarSubtitle",
     icon: "view_sidebar",
@@ -723,6 +806,7 @@ const HELP_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "docs",
     href: "/docs",
+    isNative: true,
     i18nKey: "docs",
     subtitleKey: "docsSubtitle",
     icon: "menu_book",
@@ -730,7 +814,8 @@ const HELP_ITEMS: readonly SidebarItemDefinition[] = [
   },
   {
     id: "issues",
-    href: "https://github.com/diegosouzapw/OmniRoute/issues",
+    href: "https://github.com/everson-junior/EverSync/issues",
+    isNative: true,
     i18nKey: "issues",
     subtitleKey: "issuesSubtitle",
     icon: "bug_report",
@@ -739,6 +824,7 @@ const HELP_ITEMS: readonly SidebarItemDefinition[] = [
   {
     id: "changelog",
     href: "/dashboard/changelog",
+    isNative: true,
     i18nKey: "changelog",
     subtitleKey: "changelogSubtitle",
     icon: "campaign",

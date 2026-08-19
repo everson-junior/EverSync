@@ -134,6 +134,8 @@ backup/
 /.build/
 /dist/
 /.next/
+/plugin-bundles/
+/plugin-bundles-*/
 
 # Electron
 electron/dist-electron/

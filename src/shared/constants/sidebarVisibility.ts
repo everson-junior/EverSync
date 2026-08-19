@@ -1,6 +1,7 @@
 export * from "./sidebarVisibility/types";
 export { COMPRESSION_CONTEXT_GROUP, SIDEBAR_SECTIONS } from "./sidebarVisibility/sections";
 
+import { SIDEBAR_SECTIONS } from "./sidebarVisibility/sections";
 import { HIDEABLE_SIDEBAR_ITEM_IDS } from "./sidebarVisibility/types";
 import type {
   HideableSidebarItemId,
@@ -142,21 +143,34 @@ export const SIDEBAR_ITEM_ORDER_KEY = "sidebarItemOrder";
 export const SIDEBAR_PRESET_KEY = "sidebarActivePreset";
 export const SIDEBAR_SETTINGS_UPDATED_EVENT = "omniroute:settings-updated";
 
-const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
-  "home",
-  "endpoints",
-  "api-manager",
-  "providers",
-  "combos",
-  "analytics",
-  "costs",
-  "logs",
-  "health",
-  "settings-general",
-  "settings-sidebar",
-  "docs",
-  "changelog",
-]);
+export function isMinimalBuildProfile(): boolean {
+  return (
+    process.env.NEXT_PUBLIC_OMNIROUTE_BUILD_PROFILE === "minimal" ||
+    process.env.OMNIROUTE_BUILD_PROFILE === "minimal"
+  );
+}
+
+export function isRouteAllowedInBasicProfile(pathname: string): boolean {
+  if (!isMinimalBuildProfile()) return true;
+
+  if (pathname === "/dashboard" || pathname === "/dashboard/") return true;
+  if (pathname === "/dashboard/settings" || pathname === "/dashboard/settings/") return true;
+
+  return getSectionItems({ children: SIDEBAR_SECTIONS.flatMap((section) => section.children) })
+    .filter((item) => item.isNative && !item.external)
+    .some((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+}
+
+export const MINIMAL_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set(
+  SIDEBAR_SECTIONS.flatMap((section) => getSectionItems(section))
+    .filter(
+      (item) =>
+        item.isNative &&
+        item.id !== "issues" &&
+        HIDEABLE_SIDEBAR_ITEM_IDS.includes(item.id as HideableSidebarItemId)
+    )
+    .map((item) => item.id as HideableSidebarItemId)
+);
 
 const DEVELOPER_SHOWN: ReadonlySet<HideableSidebarItemId> = new Set([
   "home",

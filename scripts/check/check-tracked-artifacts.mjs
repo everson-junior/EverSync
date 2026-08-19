@@ -14,7 +14,7 @@
 import { execFileSync } from "node:child_process";
 import { pathToFileURL } from "node:url";
 
-const FORBIDDEN_PREFIXES = ["node_modules/", ".next/", "coverage/"];
+const FORBIDDEN_PREFIXES = ["node_modules/", ".next/", "coverage/", "plugin-bundles/"];
 const FORBIDDEN_EXACT = new Set([
   "quality-metrics.json", // legacy root location (still forbidden if a stale run writes it)
   "config/quality/quality-metrics.json", // current generated location (collect-metrics.mjs)
