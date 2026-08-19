@@ -3,7 +3,7 @@ import { PLUGIN_CATALOG } from "./catalog";
 import type { SidebarPluginCatalogEntry } from "./catalog";
 
 export const PLUGIN_RELEASE_VERSION = "1.0.0";
-const DEFAULT_RELEASE_BASE = "https://github.com/everson-junior/EverSync/releases/download/v3.8.50";
+const DEFAULT_RELEASE_BASE = "https://github.com/everson-junior/EverSync/releases/download/v1.0.0";
 
 export interface SidebarPluginDefinition {
   id: SidebarItemId;
