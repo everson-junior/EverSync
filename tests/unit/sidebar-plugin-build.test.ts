@@ -15,6 +15,10 @@ const execFileAsync = promisify(execFile);
 const repositoryRoot = fileURLToPath(new URL("../..", import.meta.url));
 const buildScript = path.join(repositoryRoot, "scripts/release/build-sidebar-modules.ts");
 const verifyScript = path.join(repositoryRoot, "scripts/release/verify-sidebar-module-manifest.ts");
+const generateScript = path.join(
+  repositoryRoot,
+  "scripts/release/generate-sidebar-module-sources.ts"
+);
 
 interface ManifestAsset {
   id: string;
@@ -58,7 +62,7 @@ async function writeStrictSources(
   );
 }
 
-test("validation mode reproducibly builds and verifies all 71 catalog assets", async () => {
+test("validation mode reproducibly builds and verifies every catalog asset", async () => {
   const temporaryRoot = await mkdtemp(path.join(tmpdir(), "eversync-sidebar-build-"));
   const firstOutput = path.join(temporaryRoot, "first");
   const secondOutput = path.join(temporaryRoot, "second");
@@ -77,10 +81,10 @@ test("validation mode reproducibly builds and verifies all 71 catalog assets", a
     assert.equal(manifest.contractVersion, HOST_PLUGIN_CONTRACT_VERSION);
     assert.equal(manifest.sourceMode, "validation");
     assert.match(manifest.sourceSha, /^[a-f0-9]{40,64}$/);
-    assert.equal(manifest.assets.length, 71);
-    assert.equal(new Set(manifest.assets.map((asset) => asset.id)).size, 71);
-    assert.equal(new Set(manifest.assets.map((asset) => asset.route)).size, 71);
-    assert.equal(new Set(manifest.assets.map((asset) => asset.sha256)).size, 71);
+    assert.equal(manifest.assets.length, PLUGIN_CATALOG.length);
+    assert.equal(new Set(manifest.assets.map((asset) => asset.id)).size, PLUGIN_CATALOG.length);
+    assert.equal(new Set(manifest.assets.map((asset) => asset.route)).size, PLUGIN_CATALOG.length);
+    assert.equal(new Set(manifest.assets.map((asset) => asset.sha256)).size, PLUGIN_CATALOG.length);
     assert.deepEqual(
       manifest.assets.map((asset) => asset.id),
       PLUGIN_CATALOG.map((entry) => entry.id)
@@ -96,7 +100,10 @@ test("validation mode reproducibly builds and verifies all 71 catalog assets", a
       assert.match(body.toString("utf8"), /^\/\/ EVERSYNC_SIDEBAR_PLUGIN_ENVELOPE /);
     }
 
-    assert.equal((await readdir(firstOutput)).filter((file) => file.endsWith(".mjs")).length, 71);
+    assert.equal(
+      (await readdir(firstOutput)).filter((file) => file.endsWith(".mjs")).length,
+      PLUGIN_CATALOG.length
+    );
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }
@@ -257,12 +264,29 @@ test("strict source mode fails when any catalog module source is missing", async
       (error: Error & { stderr?: string }) => {
         assert.match(
           error.stderr ?? error.message,
-          /strict source mode requires 71 module entries/i
+          /strict source mode requires 1 module entries/i
         );
         return true;
       }
     );
     await assert.rejects(readdir(outputDirectory), /ENOENT/);
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
+test("module source generation preserves authored browser modules", async () => {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), "eversync-sidebar-generated-"));
+  const authoredRoot = path.join(repositoryRoot, "scripts/release/sidebar-module-sources");
+  const authoredModule = path.join(authoredRoot, "context-caveman.tsx");
+  const authoredSource = await readFile(authoredModule, "utf8");
+  const generatedModule = path.join(temporaryRoot, "context-caveman", "index.tsx");
+
+  try {
+    await runScript(generateScript, [temporaryRoot]);
+    assert.equal(await readFile(generatedModule, "utf8"), authoredSource);
+    assert.match(authoredSource, /getHost\(\)\.fetch/);
+    assert.doesNotMatch(authoredSource, /next-intl|next\/navigation/);
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

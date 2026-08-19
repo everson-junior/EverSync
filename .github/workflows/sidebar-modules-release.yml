@@ -120,8 +120,8 @@ jobs:
           if (manifest.sourceMode !== "strict") {
             throw new Error("Only strict module bundles may be published");
           }
-          if (manifest.assets.length !== 71) {
-            throw new Error(`Expected 71 module assets, found ${manifest.assets.length}`);
+          if (manifest.assets.length !== 1 || manifest.assets[0]?.id !== "context-caveman") {
+            throw new Error("Expected the context-caveman module asset");
           }
           NODE
 

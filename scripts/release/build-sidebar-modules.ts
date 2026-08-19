@@ -44,6 +44,17 @@ function sourceMode(): SidebarModuleSourceMode {
   throw new Error("Use --source-mode=validation or --source-mode=strict");
 }
 
+function selectedCatalog(): readonly (typeof PLUGIN_CATALOG)[number][] {
+  const selected = option("--only");
+  if (!selected) return PLUGIN_CATALOG;
+  const ids = new Set(selected.split(",").filter(Boolean));
+  const entries = PLUGIN_CATALOG.filter((entry) => ids.has(entry.id));
+  if (entries.length !== ids.size) {
+    throw new Error(`Unknown sidebar module id in --only=${selected}`);
+  }
+  return entries;
+}
+
 function isWithin(root: string, candidate: string): boolean {
   const relative = path.relative(path.resolve(root), path.resolve(candidate));
   return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
@@ -259,17 +270,20 @@ function strictAdapterSource(entry: string, id: string, route: string): string {
   );
 }
 
-async function strictEntries(sourceRoot: string): Promise<Map<string, string>> {
+async function strictEntries(
+  sourceRoot: string,
+  catalog: readonly (typeof PLUGIN_CATALOG)[number][]
+): Promise<Map<string, string>> {
   const entries = new Map<string, string>();
   const missing: string[] = [];
-  for (const catalogEntry of PLUGIN_CATALOG) {
+  for (const catalogEntry of catalog) {
     const entry = path.join(sourceRoot, catalogEntry.id, "index.tsx");
     if (await exists(entry)) entries.set(catalogEntry.id, entry);
     else missing.push(catalogEntry.id);
   }
   if (missing.length > 0) {
     throw new Error(
-      `Strict source mode requires ${PLUGIN_CATALOG.length} module entries; missing: ${missing.join(", ")}`
+      `Strict source mode requires ${catalog.length} module entries; missing: ${missing.join(", ")}`
     );
   }
   return entries;
@@ -369,17 +383,19 @@ async function promoteOutput(stagingDirectory: string, outputDirectory: string):
 
 async function main(): Promise<void> {
   const mode = sourceMode();
+  const catalog = selectedCatalog();
   const outputDirectory = path.resolve(option("--outdir") ?? "plugin-bundles");
   const sourceRoot = path.resolve(option("--source-root") ?? "src/modules");
   const sourceSha = await resolveSourceSha();
-  const entries = mode === "strict" ? await strictEntries(sourceRoot) : new Map<string, string>();
+  const entries =
+    mode === "strict" ? await strictEntries(sourceRoot, catalog) : new Map<string, string>();
   const stagingDirectory = `${outputDirectory}.tmp-${process.pid}`;
   await rm(stagingDirectory, { recursive: true, force: true });
   await mkdir(stagingDirectory, { recursive: true });
 
   try {
     const assets: SidebarModuleManifestAsset[] = [];
-    for (const catalogEntry of PLUGIN_CATALOG) {
+    for (const catalogEntry of catalog) {
       const body = await compileSource(
         catalogEntry.id,
         catalogEntry.route,
@@ -412,13 +428,15 @@ async function main(): Promise<void> {
       `${JSON.stringify(manifest, null, 2)}\n`,
       { mode: 0o644 }
     );
-    await validateSidebarModuleManifestDirectory(stagingDirectory);
+    if (catalog.length === PLUGIN_CATALOG.length) {
+      await validateSidebarModuleManifestDirectory(stagingDirectory);
+    }
     await promoteOutput(stagingDirectory, outputDirectory);
   } finally {
     await rm(stagingDirectory, { recursive: true, force: true });
   }
 
-  console.log(`Built and verified ${PLUGIN_CATALOG.length} sidebar modules in ${outputDirectory}`);
+  console.log(`Built ${catalog.length} sidebar modules in ${outputDirectory}`);
 }
 
 await main();
