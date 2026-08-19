@@ -42,3 +42,16 @@ The build writes and verifies a sibling staging directory before promotion. Prom
 existing output to a backup, renames staging into place, and restores the backup if promotion
 fails. This keeps the previous output intact on Windows, where replacing a populated directory
 with a single rename is not supported.
+
+## GitHub Release publication
+
+`modules/main` is the official release source for sidebar modules. The
+`sidebar-modules-release.yml` workflow runs when a GitHub Release is published and also supports a
+manual recovery run. The selected tag must point to a commit reachable from `modules/main`, and
+its semantic version must match `PLUGIN_RELEASE_VERSION`.
+
+The workflow installs dependencies with pnpm, runs the focused module tests, builds all strict
+bundles, verifies `manifest.json`, and uploads every `.mjs` file plus the manifest to the existing
+GitHub Release. Re-running the workflow replaces same-name assets with the verified output from
+the tagged commit. Versioned `release/vX.Y.Z` branches are historical backups and are not module
+publication sources.

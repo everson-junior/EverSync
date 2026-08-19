@@ -1,0 +1,142 @@
+name: Publish sidebar modules
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing release tag, for example v3.8.51"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sidebar-modules-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Build and attach sidebar modules
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          TAG="$RELEASE_TAG"
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            TAG="$INPUT_TAG"
+          fi
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid release tag: $TAG" >&2
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout release tag
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.release.outputs.tag }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Verify modules/main provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin modules/main
+          git merge-base --is-ancestor HEAD origin/modules/main || {
+            echo "Release tag must point to a commit from modules/main" >&2
+            exit 1
+          }
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.22.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Verify release version
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          SOURCE_VERSION="$(
+            node --import tsx/esm -e \
+              "import('./src/lib/plugins/registry.ts').then((module) => process.stdout.write(module.PLUGIN_RELEASE_VERSION))"
+          )"
+          if [[ "$SOURCE_VERSION" != "$RELEASE_VERSION" ]]; then
+            echo "Tag version $RELEASE_VERSION does not match registry version $SOURCE_VERSION" >&2
+            exit 1
+          fi
+
+      - name: Test module pipeline
+        run: >-
+          node --import tsx/esm --test
+          tests/unit/sidebar-plugin-build.test.ts
+          tests/unit/sidebar-plugin-contract.test.ts
+          tests/unit/sidebar-plugin-host.test.tsx
+          tests/unit/sidebar-plugin-installer.test.ts
+          tests/unit/sidebar-plugin-routes.test.ts
+
+      - name: Build strict sidebar modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          export EVERSYNC_SIDEBAR_MODULE_SOURCE_SHA="$(git rev-parse HEAD)"
+          pnpm run build:sidebar-modules
+          pnpm run check:sidebar-modules
+
+      - name: Verify publishable manifest
+        shell: bash
+        env:
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { readFile } from "node:fs/promises";
+
+          const manifest = JSON.parse(await readFile("plugin-bundles/manifest.json", "utf8"));
+          if (manifest.releaseVersion !== process.env.RELEASE_VERSION) {
+            throw new Error("Manifest version does not match the release tag");
+          }
+          if (manifest.sourceMode !== "strict") {
+            throw new Error("Only strict module bundles may be published");
+          }
+          if (manifest.assets.length !== 71) {
+            throw new Error(`Expected 71 module assets, found ${manifest.assets.length}`);
+          }
+          NODE
+
+      - name: Attach bundles to GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+        run: >-
+          gh release upload "$RELEASE_TAG"
+          plugin-bundles/*.mjs
+          plugin-bundles/manifest.json
+          --clobber
+          --repo "$GITHUB_REPOSITORY"
