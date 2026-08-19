@@ -19,7 +19,7 @@ import { GET as getReactJsxRuntime } from "../../src/app/api/sidebar-plugins/run
 import { initializeSidebarPluginRuntime } from "../../src/shared/components/layouts/pluginRuntimeBridge.ts";
 import { createSidebarPluginHost } from "../../src/shared/components/layouts/pluginHostRuntime.ts";
 
-const plugin = getPluginDefinition("mcp")!;
+const plugin = getPluginDefinition("context-caveman")!;
 let dataDir: string;
 let previousDataDir: string | undefined;
 let previousChecksum: string | undefined;
@@ -27,11 +27,11 @@ let previousPassword: string | undefined;
 let previousRequireApiKey: string | undefined;
 
 function request(path = ""): Request {
-  return new Request(`http://localhost/api/sidebar-plugins/mcp${path}`);
+  return new Request(`http://localhost/api/sidebar-plugins/context-caveman${path}`);
 }
 
 function context() {
-  return { params: Promise.resolve({ id: "mcp" }) };
+  return { params: Promise.resolve({ id: "context-caveman" }) };
 }
 
 beforeEach(async () => {

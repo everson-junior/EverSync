@@ -87,13 +87,17 @@ jobs:
           fi
 
       - name: Test module pipeline
-        run: >-
-          node --import tsx/esm --test
-          tests/unit/sidebar-plugin-build.test.ts
-          tests/unit/sidebar-plugin-contract.test.ts
-          tests/unit/sidebar-plugin-host.test.tsx
-          tests/unit/sidebar-plugin-installer.test.ts
-          tests/unit/sidebar-plugin-routes.test.ts
+        shell: bash
+        run: |
+          set -euo pipefail
+          for test_file in \
+            tests/unit/sidebar-plugin-build.test.ts \
+            tests/unit/sidebar-plugin-contract.test.ts \
+            tests/unit/sidebar-plugin-host.test.tsx \
+            tests/unit/sidebar-plugin-installer.test.ts \
+            tests/unit/sidebar-plugin-routes.test.ts; do
+            node --import tsx/esm --test "$test_file"
+          done
 
       - name: Build strict sidebar modules
         shell: bash
