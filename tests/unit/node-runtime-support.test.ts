@@ -12,6 +12,7 @@ import {
   getNodeRuntimeSupport as getCliNodeRuntimeSupport,
   getNodeRuntimeWarning as getCliNodeRuntimeWarning,
 } from "../../bin/nodeRuntimeSupport.mjs";
+import "../../open-sse/utils/setupPolyfill.ts";
 
 test("parseNodeVersion normalizes v-prefixed versions", () => {
   assert.deepEqual(parseNodeVersion("v22.22.2"), {
@@ -90,4 +91,8 @@ test("package.json engines.node equals SUPPORTED_NODE_RANGE (install gate == run
   // OmniRoute on a Node version the runtime then refuses to run (the Node 22.0.0–22.22.1 gap).
   const pkg = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8"));
   assert.equal(pkg.engines.node, SUPPORTED_NODE_RANGE);
+});
+
+test("Node HTTPS clients include the operating system certificate store by default", () => {
+  assert.equal(process.env.NODE_USE_SYSTEM_CA, "1");
 });

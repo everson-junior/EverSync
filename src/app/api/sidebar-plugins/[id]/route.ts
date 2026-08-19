@@ -36,7 +36,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   if (!plugin) return NextResponse.json({ error: "Unknown dynamic plugin" }, { status: 404 });
 
   try {
-    const installed = await installPluginBundle(plugin, undefined, { signal: request.signal });
+    const installed = await installPluginBundle(plugin, undefined, {
+      signal: request.signal,
+      reuseExisting: true,
+    });
     return NextResponse.json(
       { installed: true, plugin: toPublicInstalledPlugin(installed) },
       { status: 201 }

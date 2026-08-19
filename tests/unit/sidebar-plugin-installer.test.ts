@@ -70,6 +70,30 @@ async function install(body: Buffer) {
   return installPluginBundle(plugin, async () => new Response(body, { status: 200 }));
 }
 
+test("reuses a verified bundle when activation is requested again", async () => {
+  await withPluginDataDir(async () => {
+    const body = bundle();
+    let fetchCalls = 0;
+    process.env[plugin.integrityEnv] = checksum(body);
+
+    const first = await installPluginBundle(plugin, async () => {
+      fetchCalls += 1;
+      return new Response(body, { status: 200 });
+    });
+    const second = await installPluginBundle(
+      plugin,
+      async () => {
+        fetchCalls += 1;
+        return new Response(body, { status: 200 });
+      },
+      { reuseExisting: true }
+    );
+
+    assert.deepEqual(second, first);
+    assert.equal(fetchCalls, 1);
+  });
+});
+
 test("a clean installation discovers the latest strict release from its manifest", async () => {
   await withPluginDataDir(async () => {
     const releaseVersion = "4.0.0";
@@ -268,7 +292,7 @@ test("installer callers preserve active bundles on POST failure and propagate ca
   assert.doesNotMatch(hookSource, /method:\s*["']DELETE["']/);
   assert.match(
     routeSource,
-    /installPluginBundle\(plugin, undefined, \{ signal: request\.signal \}\)/
+    /installPluginBundle\(plugin, undefined, \{[\s\S]*signal: request\.signal,[\s\S]*reuseExisting: true/
   );
 });
 

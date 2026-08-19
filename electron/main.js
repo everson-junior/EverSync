@@ -629,7 +629,7 @@ function startNextServer() {
           ? Math.min(4096, Math.max(512, Math.floor(totalMb * 0.35)))
           : 512;
     }
-    return `${existing} --max-old-space-size=${heapMb}`.trim();
+    return `${existing} --use-system-ca --max-old-space-size=${heapMb}`.trim();
   })();
 
   console.log("[Electron] Starting Next.js server on port", serverPort);

@@ -22,6 +22,7 @@ export interface PluginBundleInstallOptions {
   signal?: AbortSignal;
   bodyReadTimeoutMs?: number;
   beforeMetadataCommit?: () => void | Promise<void>;
+  reuseExisting?: boolean;
 }
 
 export type PluginInstallFailureCategory =
@@ -317,6 +318,11 @@ async function installPluginBundleUnlocked(
   fetchBundle: PluginBundleFetcher,
   options: PluginBundleInstallOptions
 ): Promise<InstalledSidebarPlugin> {
+  if (options.reuseExisting) {
+    const installed = await readVerifiedInstalledPlugin(plugin);
+    if (installed?.plugin.version === plugin.version) return installed.plugin;
+  }
+
   const artifact = await resolveInstallArtifact(plugin, fetchBundle, options.signal);
   plugin = artifact.plugin;
   const expectedChecksum = artifact.checksum;

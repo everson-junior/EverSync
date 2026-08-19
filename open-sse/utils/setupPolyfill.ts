@@ -2,6 +2,12 @@
 import worker_threads from "node:worker_threads";
 import { WebSocket } from "ws";
 
+// Include the operating system certificate store so enterprise/private CAs trusted by the
+// host are available to Node's HTTPS clients. Node still keeps its bundled public CAs.
+if (process.env.NODE_USE_SYSTEM_CA === undefined) {
+  process.env.NODE_USE_SYSTEM_CA = "1";
+}
+
 if (worker_threads && !worker_threads.markAsUncloneable) {
   (worker_threads as any).markAsUncloneable = function (obj: any) {
     if (worker_threads.markAsUntransferable) {
