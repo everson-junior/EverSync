@@ -2,8 +2,8 @@ import type { SidebarItemId } from "@/shared/constants/sidebarVisibility";
 import { PLUGIN_CATALOG } from "./catalog";
 import type { SidebarPluginCatalogEntry } from "./catalog";
 
-export const PLUGIN_RELEASE_VERSION = "1.0.0";
-const DEFAULT_RELEASE_BASE = "https://github.com/everson-junior/EverSync/releases/download/v1.0.0";
+export const PLUGIN_RELEASE_VERSION = "1.0.1";
+const DEFAULT_RELEASE_BASE = "https://github.com/everson-junior/EverSync/releases/download/v1.0.1";
 
 export interface SidebarPluginDefinition {
   id: SidebarItemId;
