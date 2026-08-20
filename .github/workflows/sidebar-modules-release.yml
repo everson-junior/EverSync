@@ -124,8 +124,11 @@ jobs:
           if (manifest.sourceMode !== "strict") {
             throw new Error("Only strict module bundles may be published");
           }
-          if (manifest.assets.length !== 1 || manifest.assets[0]?.id !== "context-caveman") {
-            throw new Error("Expected the context-caveman module asset");
+          const { PLUGIN_CATALOG } = await import("./src/lib/plugins/catalog.ts");
+          const assetIds = manifest.assets.map((asset) => asset.id).sort();
+          const publishedIds = PLUGIN_CATALOG.map((entry) => entry.id).sort();
+          if (JSON.stringify(assetIds) !== JSON.stringify(publishedIds)) {
+            throw new Error("Manifest assets do not match the publishable plugin catalog");
           }
           NODE
 

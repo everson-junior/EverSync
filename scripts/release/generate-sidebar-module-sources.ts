@@ -1,10 +1,17 @@
-import { access, copyFile, mkdir, rm, writeFile } from "node:fs/promises";
+import { access, cp, copyFile, mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { PLUGIN_CATALOG } from "../../src/lib/plugins/catalog";
 
 const sourceRoot = path.resolve(process.argv[2] ?? "src/modules");
 const authoredSourceRoot = path.resolve("scripts/release/sidebar-module-sources");
 await rm(sourceRoot, { recursive: true, force: true });
+await cp(path.join(authoredSourceRoot, "shared"), path.join(sourceRoot, "shared"), {
+  recursive: true,
+  force: true,
+  errorOnExist: false,
+}).catch((error: NodeJS.ErrnoException) => {
+  if (error.code !== "ENOENT") throw error;
+});
 
 for (const entry of PLUGIN_CATALOG) {
   const moduleDirectory = path.join(sourceRoot, entry.id);

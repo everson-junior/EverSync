@@ -7,7 +7,26 @@ export interface SidebarPluginCatalogEntry {
   integrityEnv: string;
 }
 
-const PUBLISHABLE_PLUGIN_IDS = new Set<SidebarItemId>(["context-caveman"]);
+const PUBLISHABLE_PLUGIN_IDS = new Set<SidebarItemId>([
+  "analytics-compression",
+  "analytics-combo-health",
+  "analytics-evals",
+  "analytics-search",
+  "analytics-utilization",
+  "compression-exclusions",
+  "context-caveman",
+  "context-aggressive",
+  "context-ccr",
+  "context-combos",
+  "context-headroom",
+  "context-lite",
+  "context-llmlingua",
+  "context-omniglyph",
+  "context-rtk",
+  "context-session-dedup",
+  "context-settings",
+  "context-ultra",
+]);
 
 function integrityEnvName(id: string): string {
   return `EVERSYNC_PLUGIN_SHA256_${id.replaceAll("-", "_").toUpperCase()}`;

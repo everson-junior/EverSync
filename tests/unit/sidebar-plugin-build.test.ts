@@ -264,7 +264,7 @@ test("strict source mode fails when any catalog module source is missing", async
       (error: Error & { stderr?: string }) => {
         assert.match(
           error.stderr ?? error.message,
-          /strict source mode requires 1 module entries/i
+            new RegExp(`strict source mode requires ${PLUGIN_CATALOG.length} module entries`, "i")
         );
         return true;
       }
