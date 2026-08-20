@@ -70,7 +70,8 @@ export default function ContextHeadroomModule() {
     };
   }, []);
 
-  const setField = (key: string, value: unknown) => setConfig((current) => ({ ...current, [key]: value }));
+  const setField = (key: string, value: unknown) =>
+    setConfig((current) => ({ ...current, [key]: value }));
 
   const save = async () => {
     setSaving(true);
@@ -114,26 +115,53 @@ export default function ContextHeadroomModule() {
       </section>
       <section className="rounded-lg border border-border bg-surface p-4">
         <h2 className="text-sm font-semibold text-text-main">Configuration</h2>
-        <p className="mt-1 text-sm text-text-muted">Keep tabular tool output compact without losing useful rows.</p>
+        <p className="mt-1 text-sm text-text-muted">
+          Keep tabular tool output compact without losing useful rows.
+        </p>
         <div className="mt-4 flex flex-col gap-4">
           {fields.map((field) => {
             const value = config[field.key] ?? field.defaultValue;
             return (
               <label key={field.key} className="flex flex-col gap-1 text-sm text-text-main">
                 <span className="font-medium">{field.label}</span>
-                {field.description && <span className="text-xs text-text-muted">{field.description}</span>}
+                {field.description && (
+                  <span className="text-xs text-text-muted">{field.description}</span>
+                )}
                 {field.type === "number" && (
-                  <input className="rounded border border-border bg-bg px-2 py-1" type="number" value={Number(value ?? 0)} min={field.min} max={field.max} onChange={(event) => setField(field.key, Number(event.target.value))} />
+                  <input
+                    className="rounded border border-border bg-bg px-2 py-1"
+                    type="number"
+                    value={Number(value ?? 0)}
+                    min={field.min}
+                    max={field.max}
+                    onChange={(event) => setField(field.key, Number(event.target.value))}
+                  />
                 )}
                 {field.type === "boolean" && (
-                  <input type="checkbox" checked={Boolean(value)} onChange={(event) => setField(field.key, event.target.checked)} />
+                  <input
+                    type="checkbox"
+                    checked={Boolean(value)}
+                    onChange={(event) => setField(field.key, event.target.checked)}
+                  />
                 )}
                 {field.type === "string" && (
-                  <input className="rounded border border-border bg-bg px-2 py-1" value={String(value ?? "")} onChange={(event) => setField(field.key, event.target.value)} />
+                  <input
+                    className="rounded border border-border bg-bg px-2 py-1"
+                    value={String(value ?? "")}
+                    onChange={(event) => setField(field.key, event.target.value)}
+                  />
                 )}
                 {field.type === "select" && (
-                  <select className="rounded border border-border bg-bg px-2 py-1" value={String(value ?? "")} onChange={(event) => setField(field.key, event.target.value)}>
-                    {(field.options ?? []).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  <select
+                    className="rounded border border-border bg-bg px-2 py-1"
+                    value={String(value ?? "")}
+                    onChange={(event) => setField(field.key, event.target.value)}
+                  >
+                    {(field.options ?? []).map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 )}
               </label>
@@ -141,10 +169,19 @@ export default function ContextHeadroomModule() {
           })}
         </div>
         <div className="mt-5 flex items-center gap-3">
-          <button className="rounded bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60" type="button" disabled={saving} onClick={save}>
+          <button
+            className="rounded bg-primary px-3 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60"
+            type="button"
+            disabled={saving}
+            onClick={save}
+          >
             {saving ? "Saving..." : "Save settings"}
           </button>
-          {message && <p className="text-sm text-text-muted" role="status">{message}</p>}
+          {message && (
+            <p className="text-sm text-text-muted" role="status">
+              {message}
+            </p>
+          )}
         </div>
       </section>
     </div>

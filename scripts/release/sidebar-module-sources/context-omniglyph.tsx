@@ -56,14 +56,31 @@ export default function ContextOmniGlyphModule() {
           unchanged.
         </p>
         <label className="mt-5 flex items-center justify-between gap-4 text-sm text-text-main">
-          <span><strong className="block">Enable OmniGlyph</strong><span className="text-xs text-text-muted">Use context-as-image compression when eligible.</span></span>
-          <input type="checkbox" checked={enabled} disabled={loading || saving} onChange={(event) => void toggle(event.target.checked)} />
+          <span>
+            <strong className="block">Enable OmniGlyph</strong>
+            <span className="text-xs text-text-muted">
+              Use context-as-image compression when eligible.
+            </span>
+          </span>
+          <input
+            type="checkbox"
+            checked={enabled}
+            disabled={loading || saving}
+            onChange={(event) => void toggle(event.target.checked)}
+          />
         </label>
-        {message && <p className="mt-3 text-sm text-text-muted" role="status">{message}</p>}
+        {message && (
+          <p className="mt-3 text-sm text-text-muted" role="status">
+            {message}
+          </p>
+        )}
       </section>
       <section className="rounded-lg border border-border bg-surface p-4 text-sm text-text-muted">
         <h2 className="font-semibold text-text-main">Compatibility</h2>
-        <p className="mt-2">The engine validates model, transport, input format, and expected savings before it compresses a request.</p>
+        <p className="mt-2">
+          The engine validates model, transport, input format, and expected savings before it
+          compresses a request.
+        </p>
       </section>
     </div>
   );
