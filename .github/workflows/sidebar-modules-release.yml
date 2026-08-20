@@ -75,6 +75,7 @@ jobs:
         shell: bash
         env:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           set -euo pipefail
           SOURCE_VERSION="$(
@@ -88,6 +89,8 @@ jobs:
 
       - name: Test module pipeline
         shell: bash
+        env:
+          EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           set -euo pipefail
           for test_file in \
@@ -101,6 +104,8 @@ jobs:
 
       - name: Build strict sidebar modules
         shell: bash
+        env:
+          EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           set -euo pipefail
           export EVERSYNC_SIDEBAR_MODULE_SOURCE_SHA="$(git rev-parse HEAD)"
@@ -112,6 +117,7 @@ jobs:
         shell: bash
         env:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
+          EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           set -euo pipefail
           node --import tsx/esm --input-type=module <<'NODE'
