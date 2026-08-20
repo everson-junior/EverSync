@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Existing release tag, for example v3.8.51"
+        description: "Existing sidebar release tag, for example v1.0.7"
         required: true
         type: string
 
@@ -130,6 +130,17 @@ jobs:
           if (JSON.stringify(assetIds) !== JSON.stringify(publishedIds)) {
             throw new Error("Manifest assets do not match the publishable plugin catalog");
           }
+          const expectedFiles = new Set(
+            manifest.assets.map((asset) => `${asset.id}-${manifest.releaseVersion}.mjs`)
+          );
+          const manifestFiles = new Set(manifest.assets.map((asset) => asset.file));
+          if (
+            expectedFiles.size !== manifestFiles.size ||
+            [...expectedFiles].some((file) => !manifestFiles.has(file))
+          ) {
+            throw new Error("Manifest bundle file names do not match the release version");
+          }
+          console.log(`Manifest verified: ${assetIds.length} assets`);
           NODE
 
       - name: Attach bundles to GitHub Release
