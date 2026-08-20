@@ -109,6 +109,30 @@ test("validation mode reproducibly builds and verifies every catalog asset", asy
   }
 });
 
+test("release version environment produces matching manifest and bundle file versions", async () => {
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), "eversync-sidebar-release-version-"));
+  const releaseVersion = "9.8.7";
+
+  try {
+    await runScript(
+      buildScript,
+      ["--source-mode=validation", `--outdir=${temporaryRoot}`],
+      { EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION: releaseVersion }
+    );
+    const manifest = JSON.parse(
+      await readFile(path.join(temporaryRoot, "manifest.json"), "utf8")
+    ) as SidebarModuleManifest;
+
+    assert.equal(manifest.releaseVersion, releaseVersion);
+    for (const asset of manifest.assets) {
+      assert.equal(asset.version, releaseVersion);
+      assert.equal(asset.file, `${asset.id}-${releaseVersion}.mjs`);
+    }
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
+});
+
 test("strict entries compile to a native ESM runtime envelope using the host React identity", async () => {
   const temporaryRoot = await mkdtemp(path.join(tmpdir(), "eversync-sidebar-runtime-"));
   const sourceRoot = path.join(temporaryRoot, "modules");

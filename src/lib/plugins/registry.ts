@@ -2,8 +2,19 @@ import type { SidebarItemId } from "@/shared/constants/sidebarVisibility";
 import { PLUGIN_CATALOG } from "./catalog";
 import type { SidebarPluginCatalogEntry } from "./catalog";
 
-export const PLUGIN_RELEASE_VERSION = "1.0.5";
-const DEFAULT_RELEASE_BASE = "https://github.com/everson-junior/EverSync/releases/download/v1.0.5";
+const DEFAULT_PLUGIN_RELEASE_VERSION = "1.0.7";
+
+function resolvePluginReleaseVersion(): string {
+  const version = process.env.EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION?.trim();
+  if (!version) return DEFAULT_PLUGIN_RELEASE_VERSION;
+  if (!/^\d+\.\d+\.\d+$/.test(version)) {
+    throw new Error("EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION must use semver major.minor.patch");
+  }
+  return version;
+}
+
+export const PLUGIN_RELEASE_VERSION = resolvePluginReleaseVersion();
+const DEFAULT_RELEASE_BASE = `https://github.com/everson-junior/EverSync/releases/download/v${PLUGIN_RELEASE_VERSION}`;
 
 export interface SidebarPluginDefinition {
   id: SidebarItemId;
