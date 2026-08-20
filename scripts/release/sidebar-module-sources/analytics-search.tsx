@@ -1,13 +1,78 @@
 import React, { useEffect, useState } from "react";
 import { getHost } from "@eversync/plugin-host";
 
-type Stats = { total: number; today: number; cached: number; errors: number; totalCostUsd: number; cacheHitRate: number; avgDurationMs: number; byProvider: Record<string, { count: number; costUsd: number }> };
+type Stats = {
+  total: number;
+  today: number;
+  cached: number;
+  errors: number;
+  totalCostUsd: number;
+  cacheHitRate: number;
+  avgDurationMs: number;
+  byProvider: Record<string, { count: number; costUsd: number }>;
+};
 
 export default function AnalyticsSearchModule() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => { getHost().fetch("/api/v1/search/analytics").then((response) => response.ok ? response.json() : Promise.reject()).then((data) => setStats(data as Stats)).catch(() => setError("Unable to load search analytics.")); }, []);
-  if (!stats) return <p className="p-6 text-sm text-text-muted">{error ?? "Loading search analytics..."}</p>;
-  const cards = [["Searches", stats.total], ["Today", stats.today], ["Cache hit rate", `${stats.cacheHitRate}%`], ["Cost", `$${stats.totalCostUsd.toFixed(4)}`], ["Average duration", `${stats.avgDurationMs}ms`], ["Errors", stats.errors]];
-  return <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4"><header><h1 className="text-2xl font-bold text-text-main">Search Analytics</h1><p className="mt-1 text-sm text-text-muted">Usage, cache efficiency, provider distribution, and cost for web search requests.</p></header><section className="grid grid-cols-2 gap-3 md:grid-cols-3">{cards.map(([label, value]) => <div key={label as string} className="rounded-lg border border-border bg-surface p-3"><p className="text-xs text-text-muted">{label}</p><p className="mt-1 text-lg font-semibold text-text-main">{value}</p></div>)}</section><section className="rounded-lg border border-border bg-surface p-4"><h2 className="text-sm font-semibold text-text-main">By provider</h2><div className="mt-4 flex flex-col gap-3">{Object.entries(stats.byProvider).sort(([, left], [, right]) => right.count - left.count).map(([provider, data]) => <div key={provider}><div className="flex justify-between gap-3 text-sm"><span className="text-text-main">{provider}</span><span className="text-text-muted">{data.count.toLocaleString()} queries, ${data.costUsd.toFixed(4)}</span></div><div className="mt-1 h-2 overflow-hidden rounded bg-bg"><div className="h-full rounded bg-primary" style={{ width: `${stats.total ? Math.round((data.count / stats.total) * 100) : 0}%` }} /></div></div>)}</div></section></div>;
+  useEffect(() => {
+    getHost()
+      .fetch("/api/v1/search/analytics")
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then((data) => setStats(data as Stats))
+      .catch(() => setError("Unable to load search analytics."));
+  }, []);
+  if (!stats)
+    return <p className="p-6 text-sm text-text-muted">{error ?? "Loading search analytics..."}</p>;
+  const cards = [
+    ["Searches", stats.total],
+    ["Today", stats.today],
+    ["Cache hit rate", `${stats.cacheHitRate}%`],
+    ["Cost", `$${stats.totalCostUsd.toFixed(4)}`],
+    ["Average duration", `${stats.avgDurationMs}ms`],
+    ["Errors", stats.errors],
+  ];
+  return (
+    <div className="mx-auto flex max-w-5xl flex-col gap-5 p-4">
+      <header>
+        <h1 className="text-2xl font-bold text-text-main">Search Analytics</h1>
+        <p className="mt-1 text-sm text-text-muted">
+          Usage, cache efficiency, provider distribution, and cost for web search requests.
+        </p>
+      </header>
+      <section className="grid grid-cols-2 gap-3 md:grid-cols-3">
+        {cards.map(([label, value]) => (
+          <div key={label as string} className="rounded-lg border border-border bg-surface p-3">
+            <p className="text-xs text-text-muted">{label}</p>
+            <p className="mt-1 text-lg font-semibold text-text-main">{value}</p>
+          </div>
+        ))}
+      </section>
+      <section className="rounded-lg border border-border bg-surface p-4">
+        <h2 className="text-sm font-semibold text-text-main">By provider</h2>
+        <div className="mt-4 flex flex-col gap-3">
+          {Object.entries(stats.byProvider)
+            .sort(([, left], [, right]) => right.count - left.count)
+            .map(([provider, data]) => (
+              <div key={provider}>
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-text-main">{provider}</span>
+                  <span className="text-text-muted">
+                    {data.count.toLocaleString()} queries, ${data.costUsd.toFixed(4)}
+                  </span>
+                </div>
+                <div className="mt-1 h-2 overflow-hidden rounded bg-bg">
+                  <div
+                    className="h-full rounded bg-primary"
+                    style={{
+                      width: `${stats.total ? Math.round((data.count / stats.total) * 100) : 0}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+        </div>
+      </section>
+    </div>
+  );
 }

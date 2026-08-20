@@ -264,7 +264,7 @@ test("strict source mode fails when any catalog module source is missing", async
       (error: Error & { stderr?: string }) => {
         assert.match(
           error.stderr ?? error.message,
-            new RegExp(`strict source mode requires ${PLUGIN_CATALOG.length} module entries`, "i")
+          new RegExp(`strict source mode requires ${PLUGIN_CATALOG.length} module entries`, "i")
         );
         return true;
       }
@@ -278,15 +278,70 @@ test("strict source mode fails when any catalog module source is missing", async
 test("module source generation preserves authored browser modules", async () => {
   const temporaryRoot = await mkdtemp(path.join(tmpdir(), "eversync-sidebar-generated-"));
   const authoredRoot = path.join(repositoryRoot, "scripts/release/sidebar-module-sources");
-  const authoredModule = path.join(authoredRoot, "context-caveman.tsx");
-  const authoredSource = await readFile(authoredModule, "utf8");
-  const generatedModule = path.join(temporaryRoot, "context-caveman", "index.tsx");
 
   try {
     await runScript(generateScript, [temporaryRoot]);
-    assert.equal(await readFile(generatedModule, "utf8"), authoredSource);
-    assert.match(authoredSource, /getHost\(\)\.fetch/);
-    assert.doesNotMatch(authoredSource, /next-intl|next\/navigation/);
+    for (const moduleId of [
+      "context-caveman",
+      "audit",
+      "api-endpoints",
+      "provider-stats",
+      "free-provider-rankings",
+      "activity",
+      "acp-agents",
+      "runtime",
+      "webhooks",
+      "batch",
+      "batch-files",
+      "profile",
+      "tokens",
+      "cache",
+      "costs-budget",
+      "costs-free-tiers",
+      "logs-proxy",
+      "logs-console",
+      "logs-timeline",
+      "memory",
+      "agent-skills",
+      "chaos-config",
+      "skills",
+      "mcp",
+      "a2a",
+      "plugins",
+      "leaderboard",
+      "settings-appearance",
+      "settings-access-tokens",
+      "settings-cache",
+      "embedded-services",
+      "combos-live",
+      "quota",
+      "costs-quota-share",
+      "compression-studio",
+      "cli-code",
+      "cli-agents",
+      "cloud-agents",
+      "agent-bridge",
+      "traffic-inspector",
+      "discovery",
+      "media",
+      "settings-ai",
+      "settings-routing",
+      "settings-resilience",
+      "settings-advanced",
+      "settings-security",
+      "settings-feature-flags",
+      "audit-mcp",
+      "audit-a2a",
+      "playground",
+      "search-tools",
+      "translator",
+    ]) {
+      const authoredSource = await readFile(path.join(authoredRoot, `${moduleId}.tsx`), "utf8");
+      const generatedModule = path.join(temporaryRoot, moduleId, "index.tsx");
+      assert.equal(await readFile(generatedModule, "utf8"), authoredSource);
+      assert.match(authoredSource, /getHost\(\)\s*\.fetch/);
+      assert.doesNotMatch(authoredSource, /next-intl|next\/navigation/);
+    }
   } finally {
     await rm(temporaryRoot, { recursive: true, force: true });
   }

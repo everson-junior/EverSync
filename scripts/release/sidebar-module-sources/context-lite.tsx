@@ -90,7 +90,11 @@ export default function ContextLiteModule() {
           Lite has no per-engine detail settings. Enable it and choose its pipeline level in
           Compression Settings.
         </p>
-        {message && <p className="mt-3 text-sm text-text-muted" role="status">{message}</p>}
+        {message && (
+          <p className="mt-3 text-sm text-text-muted" role="status">
+            {message}
+          </p>
+        )}
       </section>
     </div>
   );
