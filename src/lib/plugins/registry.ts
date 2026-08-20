@@ -94,8 +94,7 @@ export function resolvePluginArtifactFromManifest(
     typeof releaseVersion !== "string" ||
     !/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(releaseVersion) ||
     manifest.sourceMode !== "strict" ||
-    !Array.isArray(manifest.assets) ||
-    manifest.assets.length !== PLUGIN_CATALOG.length
+    !Array.isArray(manifest.assets)
   ) {
     throw new Error("Invalid sidebar plugin release manifest");
   }

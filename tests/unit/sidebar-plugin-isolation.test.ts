@@ -128,6 +128,32 @@ test("the latest strict release manifest resolves a versioned module and checksu
   assert.equal(resolved.checksum, "c".repeat(64));
 });
 
+test("a strict partial release manifest resolves its published module", () => {
+  const plugin = getPluginDefinition("context-caveman");
+  assert.ok(plugin);
+
+  const resolved = resolvePluginArtifactFromManifest(plugin, {
+    releaseVersion: "1.0.3",
+    sourceMode: "strict",
+    assets: [
+      {
+        id: "context-caveman",
+        route: "/dashboard/context/caveman",
+        file: "context-caveman-1.0.3.mjs",
+        version: "1.0.3",
+        sha256: "17b0270943ee034333c81d198e87a3a6b34a0babc621bd5d3b1e224433badc25",
+      },
+    ],
+  });
+
+  assert.equal(resolved.plugin.version, "1.0.3");
+  assert.equal(resolved.plugin.bundleFile, "context-caveman-1.0.3.mjs");
+  assert.equal(
+    resolved.checksum,
+    "17b0270943ee034333c81d198e87a3a6b34a0babc621bd5d3b1e224433badc25"
+  );
+});
+
 test("release manifests reject validation builds and mismatched module assets", () => {
   const plugin = getPluginDefinition("mcp");
   assert.ok(plugin);
