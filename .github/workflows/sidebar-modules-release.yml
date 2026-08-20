@@ -114,7 +114,7 @@ jobs:
           RELEASE_VERSION: ${{ steps.release.outputs.version }}
         run: |
           set -euo pipefail
-          node --input-type=module <<'NODE'
+          node --import tsx/esm --input-type=module <<'NODE'
           import { readFile } from "node:fs/promises";
 
           const manifest = JSON.parse(await readFile("plugin-bundles/manifest.json", "utf8"));
