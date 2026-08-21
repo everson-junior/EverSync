@@ -2,7 +2,7 @@ import type { SidebarItemId } from "@/shared/constants/sidebarVisibility";
 import { PLUGIN_CATALOG } from "./catalog";
 import type { SidebarPluginCatalogEntry } from "./catalog";
 
-const DEFAULT_PLUGIN_RELEASE_VERSION = "1.0.7";
+const DEFAULT_PLUGIN_RELEASE_VERSION = "1.0.8";
 
 function resolvePluginReleaseVersion(): string {
   const version = process.env.EVERSYNC_SIDEBAR_MODULE_RELEASE_VERSION?.trim();

@@ -307,6 +307,7 @@ test("module source generation preserves authored browser modules", async () => 
     await runScript(generateScript, [temporaryRoot]);
     for (const moduleId of [
       "context-caveman",
+      "context-combos",
       "audit",
       "api-endpoints",
       "provider-stats",
