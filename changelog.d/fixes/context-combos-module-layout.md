@@ -1,0 +1,1 @@
+- **fix(dashboard):** preserve the Compression Hub and named-combo controls in the downloaded Context Combos module
